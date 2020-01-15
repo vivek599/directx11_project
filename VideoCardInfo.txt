@@ -1,0 +1,3 @@
+Video Card Name: Intel(R) UHD Graphics 630
+Video Card Memory: 128
+Supported Directx: Directx 11

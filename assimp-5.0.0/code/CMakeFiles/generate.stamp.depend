@@ -1,0 +1,5 @@
+# CMake generation dependency list for this directory.
+C:/Program Files/CMake/share/cmake-3.16/Modules/FindPackageHandleStandardArgs.cmake
+C:/Program Files/CMake/share/cmake-3.16/Modules/FindPackageMessage.cmake
+D:/Documents/Visual Studio 2019/Projects/directx11_project/assimp-5.0.0/cmake-modules/FindRT.cmake
+D:/Documents/Visual Studio 2019/Projects/directx11_project/assimp-5.0.0/code/CMakeLists.txt
