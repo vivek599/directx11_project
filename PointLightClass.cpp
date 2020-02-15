@@ -15,6 +15,7 @@ PointLightClass::PointLightClass(const PointLightClass& obj)
 
 PointLightClass::~PointLightClass()
 {
+
 }
 
 void PointLightClass::SetDiffuseColor(float r, float g, float b, float a)

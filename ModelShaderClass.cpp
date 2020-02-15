@@ -17,14 +17,14 @@ ModelShaderClass::ModelShaderClass(const ModelShaderClass& obj)
 
 ModelShaderClass::~ModelShaderClass()
 {
-
+	Shutdown();
 }
 
 bool ModelShaderClass::Initialize(ID3D11Device* device, HWND hwnd)
 {
 	bool result;
 
-	result = InitializeShader(device, hwnd, (WCHAR*)L"shaders/vmodel_light_shadows.hlsl", (WCHAR*)L"shaders/pmodel_light_shadows.hlsl");
+	result = InitializeShader(device, hwnd, (WCHAR*)L"../shaders/vmodel_light_shadows.hlsl", (WCHAR*)L"../shaders/pmodel_light_shadows.hlsl");
 	if (!result)
 	{
 		return false;

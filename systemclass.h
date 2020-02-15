@@ -37,14 +37,14 @@ private:
 	HINSTANCE m_hInstance;
 	HWND m_hwnd;
 
-	InputClass* m_Input;
-	GraphicClass* m_Graphics;
+	unique_ptr<InputClass> m_Input;
+	unique_ptr<GraphicClass> m_Graphics;
 
 	LARGE_INTEGER frequency;
 	float deltaTime;
 	float m_typingDelay;
 
-	CpuUsageClass* m_cpuUsage;
+	unique_ptr < CpuUsageClass > m_cpuUsage;
 
 
 };

@@ -28,7 +28,7 @@ ModelClass::ModelClass(ID3D11Device* device, const char* modelFilename, const WC
 
 ModelClass::~ModelClass()
 {
-
+	Shutdown();
 }
 
 bool ModelClass::Initialize(ID3D11Device* device, const char* modelFilename, const WCHAR* textureFilename, const WCHAR* normalFilename)
@@ -38,7 +38,7 @@ bool ModelClass::Initialize(ID3D11Device* device, const char* modelFilename, con
 	//MessageBox(NULL, GetOpenFilePathFromDialog().c_str(), L"File Path", MB_OK);
 
 	// Create the light shader object.
-	m_ModelShader = new ModelShaderClass;
+	m_ModelShader.reset( new ModelShaderClass());
 	if (!m_ModelShader)
 	{
 		return false;
@@ -53,7 +53,7 @@ bool ModelClass::Initialize(ID3D11Device* device, const char* modelFilename, con
 	}
 
 	// Create the light shader object.
-	m_depthShader = new DepthShaderClass;
+	m_depthShader.reset(new DepthShaderClass());
 	if (!m_depthShader)
 	{
 		return false;
@@ -92,22 +92,6 @@ bool ModelClass::Initialize(ID3D11Device* device, const char* modelFilename, con
 
 void ModelClass::Shutdown()
 {
-	if (m_ModelShader)
-	{
-		m_ModelShader->Shutdown();
-		delete m_ModelShader;
-		m_ModelShader = 0;
-
-	}
-
-	if (m_depthShader)
-	{
-		m_depthShader->Shutdown();
-		delete m_depthShader;
-		m_depthShader = 0;
-
-	}
-
 	ReleaseTexture();
 
 	ShutdownBuffers();
@@ -130,7 +114,7 @@ bool ModelClass::Render(ID3D11DeviceContext* context, RenderTextureClass* render
 	if (depthPass)
 	{
 		// Render the model using the depth shader.
-		result = m_depthShader->Render(context, GetIndexCount(), m_finalMatrix, lightViewMatrix, lightProjectionMatrix);
+		result = m_depthShader->Render(context, GetIndexCount(), m_finalMatrix, lightViewMatrix, lightProjectionMatrix, camera->GetPosition());
 		if (!result)
 		{
 			return false;
@@ -261,7 +245,7 @@ bool ModelClass::LoadTexture(ID3D11Device* device, const WCHAR* texturePath, con
 {
 	bool result;
 
-	m_Texture[0] = new TextureClass;
+	m_Texture[0].reset( new TextureClass());
 	if (!m_Texture[0])
 	{
 		return false;
@@ -273,7 +257,7 @@ bool ModelClass::LoadTexture(ID3D11Device* device, const WCHAR* texturePath, con
 		return false;
 	}
 
-	m_Texture[1] = new TextureClass;
+	m_Texture[1].reset(new TextureClass());
 	if (!m_Texture)
 	{
 		return false;
@@ -294,19 +278,7 @@ bool ModelClass::LoadTexture(ID3D11Device* device, const WCHAR* texturePath, con
 
 void ModelClass::ReleaseTexture()
 {
-	if (m_Texture[0])
-	{
-		m_Texture[0]->Shutdown();
-		delete m_Texture[0];
-		m_Texture[0] = 0;
-	}
 
-	if (m_Texture[1])
-	{
-		m_Texture[1]->Shutdown();
-		delete m_Texture[1];
-		m_Texture[1] = 0;
-	}
 
 }
 

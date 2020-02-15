@@ -48,8 +48,8 @@ private:
 	ComPtr<ID3D11Buffer> m_IndexBuffer;
 	int m_VertexCount, m_IndexCount;
 
-	TextureClass* m_fontTexture;
-	FontShaderClass* m_fontTextureShader;
+	unique_ptr<TextureClass> m_fontTexture;
+	unique_ptr<FontShaderClass> m_fontTextureShader;
 
 	int m_ScreenWidth, m_ScreenHeight;
 

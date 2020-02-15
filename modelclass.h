@@ -61,9 +61,9 @@ private:
 	int m_VertexCount; 
 	int m_IndexCount;
 
-	ModelShaderClass* m_ModelShader;
-	DepthShaderClass* m_depthShader;
-	TextureClass* m_Texture[2];
+	unique_ptr<ModelShaderClass> m_ModelShader;
+	unique_ptr<DepthShaderClass> m_depthShader;
+	unique_ptr<TextureClass> m_Texture[2];
 
 	bool LoadModel(const char* modelFilename);
 	void ReleaseModel();

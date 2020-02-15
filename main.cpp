@@ -14,7 +14,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR psCmdLine,
 {
 	bool result;
  
-	SystemClass* system = new SystemClass;
+	unique_ptr<SystemClass> system; system.reset( new SystemClass());
 	if (!system)
 	{
 		return 0;
@@ -27,9 +27,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR psCmdLine,
 		system->Run();
 	}
 
-	system->Shutdown();
-	delete system;
-	system = 0;
+
 
 	return 0;
 

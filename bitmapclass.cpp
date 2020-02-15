@@ -16,14 +16,14 @@ BitmapClass::BitmapClass(const BitmapClass& obj)
 
 BitmapClass::~BitmapClass()
 {
-
+	Shutdown();
 }
 
 bool BitmapClass::Initialize(ID3D11Device* device, HWND hwnd, int screenWidth, int screenHeight, WCHAR* path, int bitmapWidth, int bitmapHeight)
 {
 	bool result;
 	
-	m_BitmapShader = new BitmapShaderClass;
+	m_BitmapShader.reset( new BitmapShaderClass());
 	if (!m_BitmapShader)
 	{
 		return false;
@@ -66,13 +66,6 @@ void BitmapClass::Shutdown()
 	ReleaseTexture();
 
 	ShutdownBuffers();
-
-	if (m_BitmapShader)
-	{
-		m_BitmapShader->Shutdown();
-		delete m_BitmapShader;
-		m_BitmapShader = 0;
-	}
 
 }
 
@@ -289,7 +282,7 @@ bool BitmapClass::LoadTexture(ID3D11Device* device, WCHAR* path)
 {
 	bool result;
 
-	m_Texture = new TextureClass;
+	m_Texture.reset( new TextureClass());
 	if (!m_Texture)
 	{
 		return false;
@@ -307,12 +300,6 @@ bool BitmapClass::LoadTexture(ID3D11Device* device, WCHAR* path)
 
 void BitmapClass::ReleaseTexture()
 {
-	if (m_Texture)
-	{
-		m_Texture->Shutdown();
-		delete m_Texture;
-		m_Texture = 0;
-	}
 
 
 }

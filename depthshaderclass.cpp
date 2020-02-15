@@ -18,6 +18,7 @@ DepthShaderClass::DepthShaderClass(const DepthShaderClass& other)
 
 DepthShaderClass::~DepthShaderClass()
 {
+	Shutdown();
 }
 
 
@@ -27,7 +28,7 @@ bool DepthShaderClass::Initialize(ID3D11Device* device, HWND hwnd)
 
 
 	// Initialize the vertex and pixel shaders.
-	result = InitializeShader(device, hwnd, (WCHAR*)L"shaders/vdepth.hlsl", (WCHAR*)L"shaders/pdepth.hlsl");
+	result = InitializeShader(device, hwnd, (WCHAR*)L"../shaders/vdepth.hlsl", (WCHAR*)L"../shaders/pdepth.hlsl");
 	if(!result)
 	{
 		return false;
@@ -46,13 +47,13 @@ void DepthShaderClass::Shutdown()
 }
 
 
-bool DepthShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, Mat4 worldMatrix, Mat4 viewMatrix, Mat4 projectionMatrix)
+bool DepthShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, Mat4 worldMatrix, Mat4 viewMatrix, Mat4 projectionMatrix, Vector3 cameraPosition)
 {
 	bool result;
 
 
 	// Set the shader parameters that it will use for rendering.
-	result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix);
+	result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, cameraPosition);
 	if(!result)
 	{
 		return false;
@@ -175,6 +176,21 @@ bool DepthShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* 
 		return false;
 	}
 
+	// Setup the description of the camera dynamic constant buffer that is in the pixel shader.
+	D3D11_BUFFER_DESC cameraBufferDesc;
+	cameraBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	cameraBufferDesc.ByteWidth = sizeof(CameraBufferType);
+	cameraBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	cameraBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	cameraBufferDesc.MiscFlags = 0;
+	cameraBufferDesc.StructureByteStride = 0;
+
+	// Create the camera constant buffer pointer so we can access the vertex shader constant buffer from within this class.
+	result = device->CreateBuffer(&cameraBufferDesc, NULL, m_cameraBuffer.GetAddressOf());
+	if (FAILED(result))
+	{
+		return false;
+	}
 	return true;
 }
 
@@ -226,12 +242,13 @@ void DepthShaderClass::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND h
 }
 
 
-bool DepthShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, Mat4 worldMatrix, Mat4 viewMatrix, Mat4 projectionMatrix)
+bool DepthShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, Mat4 worldMatrix, Mat4 viewMatrix, Mat4 projectionMatrix, Vector3 cameraPosition)
 {
 	HRESULT result;
     D3D11_MAPPED_SUBRESOURCE mappedResource;
 	unsigned int bufferNumber;
 	MatrixBufferType* dataPtr;
+	CameraBufferType* cdataPtr;
 
 
 	// Transpose the matrices to prepare them for the shader.
@@ -262,6 +279,29 @@ bool DepthShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, M
 
 	// Now set the constant buffer in the vertex shader with the updated values.
     deviceContext->VSSetConstantBuffers(bufferNumber, 1, m_matrixBuffer.GetAddressOf());
+	
+	// Lock the camera constant buffer so it can be written to.
+	result = deviceContext->Map(m_cameraBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	// Get a pointer to the data in the constant buffer.
+	cdataPtr = (CameraBufferType*)mappedResource.pData;
+
+	// Copy the camera position into the constant buffer.
+	cdataPtr->cameraPosition = cameraPosition;
+	cdataPtr->padding = 0.0f;
+
+	// Unlock the camera constant buffer.
+	deviceContext->Unmap(m_cameraBuffer.Get(), 0);
+
+	// Set the position of the camera constant buffer in the vertex shader.
+	bufferNumber = 1;
+
+	// Now set the camera constant buffer in the vertex shader with the updated values.
+	deviceContext->VSSetConstantBuffers(bufferNumber, 1, m_cameraBuffer.GetAddressOf());
 
 	return true;
 }

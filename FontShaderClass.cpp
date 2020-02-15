@@ -15,14 +15,14 @@ FontShaderClass::FontShaderClass(const FontShaderClass& obj)
 
 FontShaderClass::~FontShaderClass()
 {
-
+	Shutdown();
 }
 
 bool FontShaderClass::Initialize(ID3D11Device* device, HWND hwnd)
 {
 	bool result;
 
-	result = InitializeShaders(device, hwnd, (WCHAR*)L"shaders/vfont.hlsl", (WCHAR*)L"shaders/pfont.hlsl");
+	result = InitializeShaders(device, hwnd, (WCHAR*)L"../shaders/vfont.hlsl", (WCHAR*)L"../shaders/pfont.hlsl");
 	if (!result)
 	{
 		return false;

@@ -40,16 +40,16 @@ private:
 	bool RenderToTexture(float deltaTime);
 	bool RenderScene(float deltaTime, bool depthPass);
 
-	D3DClass* m_D3D;
-	CameraClass* m_Camera;
+	unique_ptr<D3DClass> m_D3D;
+	unique_ptr<CameraClass> m_Camera;
 	vector <ModelClass*> m_Models;
-	SkyboxClass* m_skybox;
-	FrustumClass* m_frustum;
-	BitmapClass* m_Bitmap;
-	GlyphClass* m_Glyph;
-	RenderTextureClass* m_renderTexture;
+	unique_ptr<SkyboxClass> m_skybox;
+	unique_ptr<FrustumClass> m_frustum;
+	unique_ptr<BitmapClass> m_Bitmap;
+	unique_ptr<GlyphClass> m_Glyph;
+	unique_ptr<RenderTextureClass> m_renderTexture;
 		
-	LightClass* m_Light;
+	unique_ptr < LightClass> m_Light;
 	 
 	Mat4 m_ViewMatrix2D;
 

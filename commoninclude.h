@@ -5,6 +5,8 @@
 #include <d3dcommon.h>
 #include <DirectXMath.h>
 #include <d3dcompiler.h>
+#include <thread>
+#include <future>
 
 #include <WICTextureLoader.h>
 
@@ -26,6 +28,8 @@
 
 #include <wrl/client.h>
 using Microsoft::WRL::ComPtr;
+#include "Logger.h"
+
 
 using namespace std;
 using namespace DirectX;
@@ -39,4 +43,4 @@ const float DEG_TO_RAD = 0.0174532925f;
 
 #define DXASSERT(a) assert(SUCCEEDED(a))
 
-#include <vld.h>
+//#include <vld.h>

@@ -18,7 +18,7 @@ SystemClass::SystemClass(const SystemClass& obj)
 
 SystemClass::~SystemClass()
 {
-
+	Shutdown();
 }
 
 bool SystemClass::Initialize()
@@ -29,7 +29,7 @@ bool SystemClass::Initialize()
 
 	InitializeWindows(screenWidth, screenHeight);
 
-	m_cpuUsage = new CpuUsageClass;
+	m_cpuUsage.reset ( new CpuUsageClass());
 	if (!m_cpuUsage)
 	{
 		return false;
@@ -37,7 +37,7 @@ bool SystemClass::Initialize()
 	m_cpuUsage->Initialize();
 
 
-	m_Input = new InputClass;
+	m_Input.reset(new InputClass());
 	if (!m_Input)
 	{
 		return false;
@@ -50,7 +50,7 @@ bool SystemClass::Initialize()
 		return false;
 	}
 
-	m_Graphics = new GraphicClass;
+	m_Graphics.reset( new GraphicClass());
 
 	if (!m_Graphics)
 	{
@@ -72,30 +72,7 @@ bool SystemClass::Initialize()
 
 void SystemClass::Shutdown()
 {
-	// Release the cpu object.
-	if (m_cpuUsage)
-	{
-		m_cpuUsage->Shutdown();
-		delete m_cpuUsage;
-		m_cpuUsage = 0;
-	}
-
-	if (m_Graphics)
-	{
-		m_Graphics->Shutdown();
-		delete m_Graphics;
-		m_Graphics = 0;
-	}
-
-	if (m_Input)
-	{
-		m_Input->Shutdown();
-		delete m_Input;
-		m_Input = 0;
-	}
-
 	ShutdownWindows();
-	
 }
 
 void SystemClass::Run()

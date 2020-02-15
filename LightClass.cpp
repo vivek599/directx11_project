@@ -14,6 +14,7 @@ LightClass::LightClass(const LightClass& obj)
 
 LightClass::~LightClass()
 {
+
 }
 
 void LightClass::SetSpecularColor(float r, float g, float b, float a)
@@ -75,7 +76,7 @@ void LightClass::GenerateProjectionMatrix(float screenNear, float screenDepth)
 
 
 	// Setup field of view and screen aspect for a square light source.
-	fieldOfView = (float)XM_PI / 2.0f;
+	fieldOfView = (float)XM_PI / 4.0f;
 	screenAspect = 1.0f;
 
 	// Create the projection matrix for the light.
@@ -85,12 +86,12 @@ void LightClass::GenerateProjectionMatrix(float screenNear, float screenDepth)
 
 void LightClass::GetViewMatrix(Mat4& viewMatrix )
 {
-	viewMatrix = m_viewMatrix;
+	viewMatrix = (m_viewMatrix);
 }
 
 void LightClass::GetProjectionMatrix(Mat4& projMatrix)
 {
-	projMatrix = m_projectionMatrix;
+	projMatrix = (m_projectionMatrix);
 }
 
 Vector4 LightClass::GetAmbientColor()

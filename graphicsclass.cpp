@@ -23,21 +23,20 @@ GraphicClass::GraphicClass(const GraphicClass& obj)
 
 GraphicClass::~GraphicClass()
 {
-
+	Shutdown();
 }
 
 bool GraphicClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 {
 	bool result;
 	 
-	m_D3D = new D3DClass;
+	m_D3D.reset( new D3DClass());
 	if (!m_D3D)
 	{
 		return false;
 	}
 
-	result = m_D3D->Initialize(screenWidth, screenHeight, VSYNCE_ENABLED, hwnd, FULL_SCREEN, 
-				SCREEN_DEPTH, SCREEN_NEAR );
+	result = m_D3D->Initialize(screenWidth, screenHeight, VSYNCE_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR );
 	
 	if (!result)
 	{
@@ -48,7 +47,7 @@ bool GraphicClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	//write video card info to a file
 	m_D3D->WriteVideoCardInfoToFile();
 
-	m_Camera = new CameraClass;
+	m_Camera.reset(new CameraClass());
 	if (!m_Camera)
 	{
 		return false;
@@ -58,32 +57,32 @@ bool GraphicClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_Camera->GetViewMatrix(m_ViewMatrix2D);
 
 	// Create the frustum object.
-	m_frustum = new FrustumClass;
+	m_frustum.reset( new FrustumClass());
 	if (!m_frustum)
 	{
 		return false;
 	}
 
-	m_Bitmap = new BitmapClass;
+	m_Bitmap.reset(new BitmapClass());
 	if (!m_Bitmap)
 	{
 		return false;
 	}
 
-	result = m_Bitmap->Initialize(m_D3D->GetDevice().Get(), hwnd, screenWidth, screenHeight, (WCHAR*)L"Textures/stone_wall1.jpg", 128, 128);
+	result = m_Bitmap->Initialize(m_D3D->GetDevice().Get(), hwnd, screenWidth, screenHeight, (WCHAR*)L"../Textures/stone_wall1.jpg", 128, 128);
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize bitmap object!", L"Error", MB_OK);
 		return false;
 	}
 
-	m_Glyph = new GlyphClass;
+	m_Glyph.reset(new GlyphClass());
 	if (!m_Glyph)
 	{
 		return false;
 	}
 
-	result = m_Glyph->Initialize(m_D3D->GetDevice().Get(), hwnd, screenWidth, screenHeight, (WCHAR*)L"Font/AgencyFBFont_64x64.bmp" );
+	result = m_Glyph->Initialize(m_D3D->GetDevice().Get(), hwnd, screenWidth, screenHeight, (WCHAR*)L"../Font/AgencyFBFont_64x64.bmp" );
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize Glyph object!", L"Error", MB_OK);
@@ -94,7 +93,7 @@ bool GraphicClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	
 
 	// Create the light object.
-	m_Light = new LightClass;
+	m_Light.reset( new LightClass());
 	if (!m_Light)
 	{
 		return false;
@@ -111,7 +110,7 @@ bool GraphicClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_Light->GenerateProjectionMatrix(SCREEN_NEAR, SCREEN_DEPTH);
 
 	// Create the render to texture object.
-	m_renderTexture = new RenderTextureClass;
+	m_renderTexture.reset( new RenderTextureClass());
 	if (!m_renderTexture)
 	{
 		return false;
@@ -124,17 +123,38 @@ bool GraphicClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
-	// Initialize the model object.
-	m_Models.push_back(new ModelClass(m_D3D->GetDevice().Get(), "Models/greek_statue/Statue_v1_L2.fbx", L"Models/greek_statue/DavidFixedDiff.jpg", L"Models/greek_statue/Statue_v1_L2_n.jpg"));
-	m_Models.push_back(new ModelClass(m_D3D->GetDevice().Get(), "Models/angel_lucy/alucy_lowpoly2.fbx", L"Models/angel_lucy/Concrete_pink_1S.jpg", L"Models/angel_lucy/RockSharp0036_1S_n.jpg"));
-	//m_Models.push_back(new ModelClass(m_D3D->GetDevice().Get(), "Models/greek_platform/greek_platform1.fbx", L"Models/greek_platform/greek_platform1.jpg", L"Models/greek_platform/greek_platform1_n.jpg"));
-	m_Models.push_back(new ModelClass(m_D3D->GetDevice().Get(), "Models/greek_platform/plain_platform.fbx", L"Models/greek_platform/plain_platform.jpg", L"Models/greek_platform/greek_platform1_n.jpg"));
-	m_Models.push_back(new ModelClass(m_D3D->GetDevice().Get(), "Models/voronoi/voronoi_box.fbx", L"Models/voronoi/gray_tex1.jpg", L"Models/voronoi/gray_tex1_n.jpg"));
+#if 1
 
+	auto func = [=]( const char* modelfile, const wchar_t* texture, const wchar_t* normal) -> ModelClass* { return new ModelClass(m_D3D->GetDevice().Get(), modelfile, texture, normal); };
+	
+	DxTime t; t.Start();
+	future<ModelClass*> future1 = async( func, "../Models/greek_statue/Statue_v1_L2.fbx", L"../Models/greek_statue/DavidFixedDiff.jpg", L"../Models/greek_statue/Statue_v1_L2_n.jpg");
+	future<ModelClass*> future2 = async( func, "../Models/angel_lucy/alucy_lowpoly2.fbx", L"../Models/angel_lucy/Concrete_pink_1S.jpg", L"../Models/angel_lucy/RockSharp0036_1S_n.jpg");
+	future<ModelClass*> future3 = async( func, "../Models/greek_platform/plain_platform.fbx", L"../Models/greek_platform/plain_platform.jpg", L"../Models/greek_platform/greek_platform1_n.jpg");
+	future<ModelClass*> future4 = async( func, "../Models/voronoi/voronoi_box.fbx", L"../Models/voronoi/gray_tex1.jpg", L"../Models/voronoi/gray_tex1_n.jpg");
+	
+	m_Models.push_back(future1.get());
+	m_Models.push_back(future2.get());
+	m_Models.push_back(future3.get());
+	m_Models.push_back(future4.get());
+	DXLOG( "Time = %f",t.End("") );
+
+#else
+
+	DxTime t; t.Start();
+	// Initialize the model object.
+	m_Models.push_back(new ModelClass(m_D3D->GetDevice().Get(), "../Models/greek_statue/Statue_v1_L2.fbx", L"../Models/greek_statue/DavidFixedDiff.jpg", L"../Models/greek_statue/Statue_v1_L2_n.jpg"));
+	m_Models.push_back(new ModelClass(m_D3D->GetDevice().Get(), "../Models/angel_lucy/alucy_lowpoly2.fbx", L"../Models/angel_lucy/Concrete_pink_1S.jpg", L"../Models/angel_lucy/RockSharp0036_1S_n.jpg"));
+	//m_Models.push_back(new ModelClass(m_D3D->GetDevice().Get(), "Models/greek_platform/greek_platform1.fbx", L"../Models/greek_platform/greek_platform1.jpg", L"../Models/greek_platform/greek_platform1_n.jpg"));
+	m_Models.push_back(new ModelClass(m_D3D->GetDevice().Get(), "../Models/greek_platform/plain_platform.fbx", L"../Models/greek_platform/plain_platform.jpg", L"../Models/greek_platform/greek_platform1_n.jpg"));
+	m_Models.push_back(new ModelClass(m_D3D->GetDevice().Get(), "../Models/voronoi/voronoi_box.fbx", L"../Models/voronoi/gray_tex1.jpg", L"../Models/voronoi/gray_tex1_n.jpg"));
+	DXLOG("Time = %f", t.End(""));
+
+#endif
 	/*int maxMushrooms = 20;
 	for (int i = 0; i < maxMushrooms; i++)
 	{
-		ModelClass* tmp = new ModelClass(m_D3D->GetDevice(), "Models/MushroomButton/Mushroom_lp.obj", L"Models/MushroomButton/Mushroom_lp.jpg");
+		ModelClass* tmp = new ModelClass(m_D3D->GetDevice(), "Models/MushroomButton/Mushroom_lp.obj", L"../Models/MushroomButton/Mushroom_lp.jpg");
 		tmp->SetPosition(Vector3(rand() % maxMushrooms - maxMushrooms * 0.5f, rand() % maxMushrooms - maxMushrooms * 0.5f, rand() % maxMushrooms - maxMushrooms * 0.5f));
 		m_Models.push_back(tmp);
 	}*/
@@ -148,7 +168,7 @@ bool GraphicClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 // 		}
 	}
 	
-	m_skybox = new SkyboxClass;
+	m_skybox.reset( new SkyboxClass());
 	if (!m_skybox)
 	{
 		return false;
@@ -168,72 +188,16 @@ bool GraphicClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 void GraphicClass::Shutdown()
 {
  
-	// Release the render to texture object.
-	if (m_renderTexture)
-	{
-		m_renderTexture->Shutdown();
-		delete m_renderTexture;
-		m_renderTexture = 0;
-	}
-
-	// Release the frustum object.
-	if (m_frustum)
-	{
-		delete m_frustum;
-		m_frustum = 0;
-	}
-
-	// Release the skybox object.
-	if (m_skybox)
-	{
-		m_skybox->Shutdown();
-		delete m_skybox;
-		m_skybox = 0;
-	}
-
-	// Release the light object.
-	if (m_Light)
-	{
-		delete m_Light;
-		m_Light = 0;
-	}
-
-
-	if (m_Glyph)
-	{
-		m_Glyph->Shutdown();
-		delete m_Glyph;
-		m_Glyph = 0;
-	}
-
 	for (int i = 0; i < m_Models.size(); i++)
 	{
 		if (m_Models[i])
 		{
-			m_Models[i]->Shutdown();
+			delete m_Models[i]; 
+			m_Models[i] = 0;
 		}
 	}
+
 	m_Models.clear();
-
-	if (m_Bitmap)
-	{
-		m_Bitmap->Shutdown();
-		delete m_Bitmap;
-		m_Bitmap = 0;
-	}
-
-	if (m_Camera)
-	{
-		delete m_Camera;
-		m_Camera = 0;
-	}
-
-	if (m_D3D)
-	{
-		m_D3D->Shutdown();
-		delete m_D3D;
-		m_D3D = 0;
-	}
 	
 }
 
@@ -243,7 +207,7 @@ bool GraphicClass::Frame(float deltaTime)
 	static float lightPositioncntr = 0.f;
 
 	// Update the position of the light each frame.
-	lightPositioncntr += 2.f * deltaTime;
+	lightPositioncntr += 1.f * deltaTime;
 	
 	// Update the position of the light.
 	//m_Light->SetPosition( 15.f * sin(lightPositioncntr) , 8.0f, 15.f * cos(lightPositioncntr));
@@ -372,8 +336,7 @@ bool GraphicClass::RenderScene(float deltaTime, bool depthPass)
 
 	// Get the view and orthographic matrices from the light object.
 	m_Light->GetViewMatrix(lightViewMatrix);
-	m_Light->GetProjectionMatrix(lightProjectionMatrix);
-
+	m_Light->GetProjectionMatrix(lightProjectionMatrix); 
 	// Construct the frustum.
 	m_frustum->ConstructFrustum(SCREEN_DEPTH, projection, view);
 
@@ -415,7 +378,7 @@ bool GraphicClass::RenderScene(float deltaTime, bool depthPass)
 		Vector3 pos = m_Models[i]->GetPosition();
 		if (m_frustum->CheckPoint(pos.x, pos.y, pos.z))
 		{
-			result = m_Models[i]->Render(m_D3D->GetDeviceContext().Get(), m_renderTexture, m_Light, m_Camera, world, view, projection, lightViewMatrix, lightProjectionMatrix, depthPass);
+			result = m_Models[i]->Render(m_D3D->GetDeviceContext().Get(), m_renderTexture.get(), m_Light.get(), m_Camera.get(), world, view, projection, lightViewMatrix, lightProjectionMatrix, depthPass);
 			if (!result)
 			{
 				return false;

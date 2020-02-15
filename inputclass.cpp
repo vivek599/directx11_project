@@ -15,7 +15,7 @@ InputClass::InputClass(const InputClass& obj)
 
 InputClass::~InputClass()
 {
-
+	Shutdown();
 }
 
 bool InputClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeight)

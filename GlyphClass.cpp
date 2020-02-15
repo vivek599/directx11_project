@@ -23,13 +23,13 @@ GlyphClass::GlyphClass(const GlyphClass& obj)
 
 GlyphClass::~GlyphClass()
 {
-
+	Shutdown();
 }
 
 bool GlyphClass::Initialize(ID3D11Device* device, HWND hwnd, int screenWidth, int screenHeight, WCHAR* path)
 {
 	bool result;
-	m_GlyphWidthData.open("Font/AgencyFBFont_64x64_width.txt");
+	m_GlyphWidthData.open("../Font/AgencyFBFont_64x64_width.txt");
 	while (1)
 	{
 		if (m_GlyphWidthData.eof())
@@ -50,7 +50,7 @@ bool GlyphClass::Initialize(ID3D11Device* device, HWND hwnd, int screenWidth, in
 	m_GlyphWidth[char(0x0D)] = 0;//zero width enterkey char
 	m_StringToDraw = "@xyz";
 
-	m_fontTextureShader = new FontShaderClass;
+	m_fontTextureShader.reset( new FontShaderClass());
 	if (!m_fontTextureShader)
 	{
 		return false;
@@ -86,13 +86,6 @@ bool GlyphClass::Initialize(ID3D11Device* device, HWND hwnd, int screenWidth, in
 
 void GlyphClass::Shutdown()
 {
-	if (m_fontTextureShader)
-	{
-		m_fontTextureShader->Shutdown();
-		delete m_fontTextureShader;
-		m_fontTextureShader = 0;
-	}
-
 	ReleaseTexture();
 
 	ShutdownBuffers();
@@ -341,7 +334,7 @@ bool GlyphClass::LoadTexture(ID3D11Device* device, WCHAR* path)
 
 	bool result;
 
-	m_fontTexture = new TextureClass;
+	m_fontTexture.reset(new TextureClass());
 	if (!m_fontTexture)
 	{
 		return false;
@@ -359,10 +352,5 @@ bool GlyphClass::LoadTexture(ID3D11Device* device, WCHAR* path)
 
 void GlyphClass::ReleaseTexture()
 {
-	if (m_fontTexture)
-	{
-		m_fontTexture->Shutdown();
-		delete m_fontTexture;
-		m_fontTexture = 0;
-	}
+
 }

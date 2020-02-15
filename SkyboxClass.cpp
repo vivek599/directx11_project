@@ -12,6 +12,7 @@ SkyboxClass::SkyboxClass()
 
 SkyboxClass::~SkyboxClass()
 {
+	Shutdown();
 }
 
 bool SkyboxClass::Initialize(ID3D11Device* device)
@@ -19,7 +20,7 @@ bool SkyboxClass::Initialize(ID3D11Device* device)
 	bool result;
 
 	// Create the sky dome shader object.
-	m_skyboxShader = new SkyboxShaderClass;
+	m_skyboxShader.reset( new SkyboxShaderClass());
 	if (!m_skyboxShader)
 	{
 		return false;
@@ -34,7 +35,7 @@ bool SkyboxClass::Initialize(ID3D11Device* device)
 	}
 
 	// Load in the sky dome model.
-	result = LoadSkyboxModel("Models/skybox/skybox1.obj"); 
+	result = LoadSkyboxModel("../Models/skybox/skybox1.obj"); 
 	if (!result)
 	{
 		return false;
@@ -47,7 +48,7 @@ bool SkyboxClass::Initialize(ID3D11Device* device)
 		return false;
 	}
 
-	result = LoadTexture(device, (WCHAR*)L"Models/skybox/skybox.png");
+	result = LoadTexture(device, (WCHAR*)L"../Models/skybox/skybox.png");
 	if (!result)
 	{
 		return false;
@@ -58,12 +59,6 @@ bool SkyboxClass::Initialize(ID3D11Device* device)
 
 void SkyboxClass::Shutdown()
 {
-	if (m_skyboxShader)
-	{
-		m_skyboxShader->Shutdown();
-		delete m_skyboxShader;
-		m_skyboxShader = 0;
-	}
 
 	ReleaseTexture();
 
@@ -245,7 +240,7 @@ bool SkyboxClass::LoadTexture(ID3D11Device* device, const WCHAR* path)
 {
 	bool result;
 
-	m_Texture = new TextureClass;
+	m_Texture.reset(new TextureClass());
 	if (!m_Texture)
 	{
 		return false;
@@ -262,11 +257,5 @@ bool SkyboxClass::LoadTexture(ID3D11Device* device, const WCHAR* path)
 
 void SkyboxClass::ReleaseTexture()
 {
-	if (m_Texture)
-	{
-		m_Texture->Shutdown();
-		delete m_Texture;
-		m_Texture = 0;
-	}
 
 }

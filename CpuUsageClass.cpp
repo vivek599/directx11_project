@@ -15,6 +15,7 @@ CpuUsageClass::CpuUsageClass(const CpuUsageClass& obj)
 
 CpuUsageClass::~CpuUsageClass()
 {
+	Shutdown();
 }
 
 void CpuUsageClass::Initialize()

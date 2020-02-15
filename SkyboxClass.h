@@ -42,8 +42,8 @@ private:
 	vector <VertexType> vertices;
 	vector <UINT> indices;
 
-	SkyboxShaderClass* m_skyboxShader;
-	TextureClass* m_Texture;
+	unique_ptr<SkyboxShaderClass> m_skyboxShader;
+	unique_ptr<TextureClass> m_Texture;
 
 };
 

@@ -47,13 +47,13 @@ private:
 	ComPtr<ID3D11Buffer> m_IndexBuffer;
 	int m_VertexCount, m_IndexCount;
 
-	TextureClass* m_Texture;
+	unique_ptr<TextureClass> m_Texture;
 
 	int m_ScreenWidth, m_ScreenHeight;
 	int m_BitmapWidth, m_BitmapHeight;
 	int m_PrevPosX, m_PrevPosY;
 
-	BitmapShaderClass* m_BitmapShader;
+	unique_ptr<BitmapShaderClass> m_BitmapShader;
 
 };
 

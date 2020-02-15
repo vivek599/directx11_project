@@ -16,6 +16,7 @@ RenderTextureClass::RenderTextureClass(const RenderTextureClass& obj)
 
 RenderTextureClass::~RenderTextureClass()
 {
+	Shutdown();
 }
 
 bool RenderTextureClass::Initialize(ID3D11Device* device, int textureWidth, int textureHeight, float screenNear, float screenDepth)
@@ -126,11 +127,7 @@ bool RenderTextureClass::Initialize(ID3D11Device* device, int textureWidth, int 
 
 void RenderTextureClass::Shutdown()
 {
-	m_shaderResourceView.Reset();
-
-	m_renderTargetView.Reset();
-
-	m_renderTargetTexture.Reset();
+ 
 }
 
 void RenderTextureClass::SetRenderTarget(ID3D11DeviceContext* deviceContext )

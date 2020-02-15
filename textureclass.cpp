@@ -15,7 +15,7 @@ TextureClass::TextureClass(const TextureClass& obj)
 
 TextureClass::~TextureClass()
 {
-
+	Shutdown();
 }
 
 bool TextureClass::Initialize(ID3D11Device* device, const WCHAR* path)

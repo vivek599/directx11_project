@@ -17,7 +17,7 @@ D3DClass::D3DClass(const D3DClass& obj)
 
 D3DClass::~D3DClass()
 {
-
+	Shutdown();
 }
 
 
@@ -383,30 +383,6 @@ void D3DClass::Shutdown()
 		m_swapChain->SetFullscreenState(false, NULL);
 	}
 
-	m_alphaEnableBlendingState.Reset();
-	m_DepthDisableStencilState.Reset();
-
-	m_rasterState.Reset();
-
-	m_depthStencilView.Reset();
-
-	m_depthStencilState.Reset();
-
-	m_rasterStateNoCulling.Reset();
-
-	m_depthStencilBuffer.Reset();
-
-	m_renderTargetView.Reset();
-
-	m_deviceContext.Reset();
-
-	m_device.Reset();
-
-	m_swapChain.Reset();
-
-
-
-
 }
 
 void D3DClass::BeginScene(float red, float green, float blue, float alpha)
@@ -558,3 +534,6 @@ void D3DClass::ResetViewport()
 	m_deviceContext->RSSetViewports(1, &m_viewport);
 
 }
+
+
+
