@@ -28,7 +28,7 @@ bool DepthShaderClass::Initialize(ID3D11Device* device, HWND hwnd)
 
 
 	// Initialize the vertex and pixel shaders.
-	result = InitializeShader(device, hwnd, (WCHAR*)L"../shaders/vdepth.hlsl", (WCHAR*)L"../shaders/pdepth.hlsl");
+	result = InitializeShader(device, hwnd, (WCHAR*)L"../shaders/depth_vs.hlsl", (WCHAR*)L"../shaders/depth_ps.hlsl");
 	assert(result);
 
 
@@ -81,7 +81,7 @@ bool DepthShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* 
 	pixelShaderBuffer = 0;
 
     // Compile the vertex shader code.
-	result = D3DCompileFromFile(vsFilename, NULL, NULL, "DepthVertexShader", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0,
+	result = D3DCompileFromFile(vsFilename, NULL, NULL, "main", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0,
 		&vertexShaderBuffer, &errorMessage);
 	if(FAILED(result))
 	{
@@ -100,7 +100,7 @@ bool DepthShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* 
 	}
 
     // Compile the pixel shader code.
-	result = D3DCompileFromFile(psFilename, NULL, NULL, "DepthPixelShader", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, 
+	result = D3DCompileFromFile(psFilename, NULL, NULL, "main", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, 
 								   &pixelShaderBuffer, &errorMessage);
 	if(FAILED(result))
 	{

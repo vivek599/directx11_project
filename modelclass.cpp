@@ -99,20 +99,15 @@ bool ModelClass::Render(ID3D11DeviceContext* context, RenderTextureClass* render
 	{
 		// Render the model using the depth shader.
 		result = m_depthShader->Render(context, GetIndexCount(), m_finalMatrix, lightViewMatrix, lightProjectionMatrix, camera->GetPosition());
-		if (!result)
-		{
-			return false;
-		}
+		assert(result);
 
 	}
 	else
 	{
 		// Render the model using the model light shader.
 		result = m_ModelShader->Render( context, GetIndexCount(), m_finalMatrix, view, proj, light, lightViewMatrix, lightProjectionMatrix, GetTextureArray(), renderTexture->GetShaderResourceView().Get(), camera->GetPosition() );
-		if (!result)
-		{
-			return false;
-		}
+		assert(result);
+
 	}
 
 	return true;

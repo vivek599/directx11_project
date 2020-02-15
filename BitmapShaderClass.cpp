@@ -21,7 +21,7 @@ bool BitmapShaderClass::Initialize(ID3D11Device* device, HWND hwnd)
 {
 	bool result;
 
-	result = InitializeShaders(device, hwnd, (WCHAR*)L"../shaders/vtexture.hlsl", (WCHAR*)L"../shaders/ptexture.hlsl");
+	result = InitializeShaders(device, hwnd, (WCHAR*)L"../shaders/texture_vs.hlsl", (WCHAR*)L"../shaders/texture_ps.hlsl");
 	assert(result);
 
 	return true;
@@ -68,7 +68,7 @@ bool BitmapShaderClass::InitializeShaders(ID3D11Device* device, HWND hwnd, WCHAR
 	pixelShaderBuffer = 0;
 
 	//compile vertex shader
-	result = D3DCompileFromFile(vsPath, NULL, NULL, "TextureVertexShader", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0,
+	result = D3DCompileFromFile(vsPath, NULL, NULL, "main", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0,
 		&vertexShaderBuffer, &errMsg);
 	if (FAILED(result))
 	{
@@ -84,7 +84,7 @@ bool BitmapShaderClass::InitializeShaders(ID3D11Device* device, HWND hwnd, WCHAR
 	}
 
 	//compile pixel shader
-	result = D3DCompileFromFile(psPath, NULL, NULL, "TexturePixelShader", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0,
+	result = D3DCompileFromFile(psPath, NULL, NULL, "main", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0,
 		&pixelShaderBuffer, &errMsg);
 
 	if (FAILED(result))

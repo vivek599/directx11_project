@@ -24,7 +24,7 @@ bool ModelShaderClass::Initialize(ID3D11Device* device, HWND hwnd)
 {
 	bool result;
 
-	result = InitializeShader(device, hwnd, (WCHAR*)L"../shaders/vmodel_light_shadows.hlsl", (WCHAR*)L"../shaders/pmodel_light_shadows.hlsl");
+	result = InitializeShader(device, hwnd, (WCHAR*)L"../shaders/model_light_shadows_vs.hlsl", (WCHAR*)L"../shaders/model_light_shadows_ps.hlsl");
 	assert(result);
 
 
@@ -44,10 +44,8 @@ bool ModelShaderClass::Render(ID3D11DeviceContext* context, int indexCount, Mat4
 
 	result = SetShaderParameter(context, indexCount, world, view, proj, light, lightViewMatrix, lightProjectionMatrix, 
 		textureArray, depthMapTexture, cameraPosition );
-	if (!result)
-	{
-		return false;
-	}
+	assert(result);
+
 
 	RenderShader(context, indexCount);
 
@@ -57,9 +55,9 @@ bool ModelShaderClass::Render(ID3D11DeviceContext* context, int indexCount, Mat4
 bool ModelShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* vsFileName, WCHAR* psFileName)
 {
 	HRESULT hr;
-	ID3D10Blob* errMsg;
-	ID3D10Blob* vertexShaderBuffer;
-	ID3D10Blob* pixelShaderBuffer;
+	ComPtr<ID3D10Blob> errMsg;
+	ComPtr<ID3D10Blob> vertexShaderBuffer;
+	ComPtr<ID3D10Blob> pixelShaderBuffer;
 
 	D3D11_INPUT_ELEMENT_DESC polygonLayout[5];
 	UINT numElement;
@@ -68,17 +66,12 @@ bool ModelShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* 
 	D3D11_BUFFER_DESC lightBufferDesc, lightBufferDesc2; 
 	D3D11_BUFFER_DESC cameraBufferDesc;
 
-	errMsg = 0;
-	vertexShaderBuffer = 0;
-	pixelShaderBuffer = 0;
-
-	hr = D3DCompileFromFile(vsFileName, NULL, NULL, "ShadowVertexShader", "vs_5_0",
-		D3D10_SHADER_ENABLE_STRICTNESS, 0, &vertexShaderBuffer, &errMsg);
+	hr = D3DCompileFromFile(vsFileName, NULL, NULL, "main", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, vertexShaderBuffer.GetAddressOf(), &errMsg);
 	if (FAILED(hr))
 	{
 		if (errMsg)
 		{
-			OutputShaderErrorMsg(errMsg, hwnd, vsFileName);
+			OutputShaderErrorMsg(errMsg.Get(), hwnd, vsFileName);
 		}
 		else
 		{
@@ -88,13 +81,12 @@ bool ModelShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* 
 		return false;
 	}
 
-	hr = D3DCompileFromFile(psFileName, NULL, NULL, "ShadowPixelShader", "ps_5_0",
-		D3D10_SHADER_ENABLE_STRICTNESS, 0, &pixelShaderBuffer, &errMsg);
+	hr = D3DCompileFromFile(psFileName, NULL, NULL, "main", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, pixelShaderBuffer.GetAddressOf(), &errMsg);
 	if (FAILED(hr))
 	{
 		if (errMsg)
 		{
-			OutputShaderErrorMsg(errMsg, hwnd, psFileName);
+			OutputShaderErrorMsg(errMsg.Get(), hwnd, psFileName);
 		}
 		else
 		{
@@ -158,18 +150,11 @@ bool ModelShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* 
 
 	numElement = sizeof(polygonLayout) / sizeof(polygonLayout[0]);
 
-	hr = device->CreateInputLayout(polygonLayout, numElement, vertexShaderBuffer->GetBufferPointer(),
-		vertexShaderBuffer->GetBufferSize(), m_inputLayout.GetAddressOf());
+	hr = device->CreateInputLayout(polygonLayout, numElement, vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), m_inputLayout.GetAddressOf());
 	if (FAILED(hr))
 	{
 		return false;
 	}
-
-	vertexShaderBuffer->Release();
-	vertexShaderBuffer = 0;
-
-	pixelShaderBuffer->Release();
-	pixelShaderBuffer = 0;
 
 	// Create a texture sampler state description.
 	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;

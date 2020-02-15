@@ -166,52 +166,52 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="shaders\pcolor.hlsl">
+    <FxCompile Include="x64\shaders\color_ps.hlsl">
       <Filter>Source Files\shaders</Filter>
     </FxCompile>
-    <FxCompile Include="shaders\pdepth.hlsl">
+    <FxCompile Include="x64\shaders\color_vs.hlsl">
       <Filter>Source Files\shaders</Filter>
     </FxCompile>
-    <FxCompile Include="shaders\pfont.hlsl">
+    <FxCompile Include="x64\shaders\depth_ps.hlsl">
       <Filter>Source Files\shaders</Filter>
     </FxCompile>
-    <FxCompile Include="shaders\plight.hlsl">
+    <FxCompile Include="x64\shaders\depth_vs.hlsl">
       <Filter>Source Files\shaders</Filter>
     </FxCompile>
-    <FxCompile Include="shaders\pmodel_light.hlsl">
+    <FxCompile Include="x64\shaders\font_ps.hlsl">
       <Filter>Source Files\shaders</Filter>
     </FxCompile>
-    <FxCompile Include="shaders\pmodel_light_shadows.hlsl">
+    <FxCompile Include="x64\shaders\font_vs.hlsl">
       <Filter>Source Files\shaders</Filter>
     </FxCompile>
-    <FxCompile Include="shaders\pskybox.hlsl">
+    <FxCompile Include="x64\shaders\light_ps.hlsl">
       <Filter>Source Files\shaders</Filter>
     </FxCompile>
-    <FxCompile Include="shaders\ptexture.hlsl">
+    <FxCompile Include="x64\shaders\light_vs.hlsl">
       <Filter>Source Files\shaders</Filter>
     </FxCompile>
-    <FxCompile Include="shaders\vcolor.hlsl">
+    <FxCompile Include="x64\shaders\model_light_ps.hlsl">
       <Filter>Source Files\shaders</Filter>
     </FxCompile>
-    <FxCompile Include="shaders\vdepth.hlsl">
+    <FxCompile Include="x64\shaders\model_light_shadows_ps.hlsl">
       <Filter>Source Files\shaders</Filter>
     </FxCompile>
-    <FxCompile Include="shaders\vfont.hlsl">
+    <FxCompile Include="x64\shaders\model_light_shadows_vs.hlsl">
       <Filter>Source Files\shaders</Filter>
     </FxCompile>
-    <FxCompile Include="shaders\vlight.hlsl">
+    <FxCompile Include="x64\shaders\model_light_vs.hlsl">
       <Filter>Source Files\shaders</Filter>
     </FxCompile>
-    <FxCompile Include="shaders\vmodel_light.hlsl">
+    <FxCompile Include="x64\shaders\skybox_ps.hlsl">
       <Filter>Source Files\shaders</Filter>
     </FxCompile>
-    <FxCompile Include="shaders\vmodel_light_shadows.hlsl">
+    <FxCompile Include="x64\shaders\skybox_vs.hlsl">
       <Filter>Source Files\shaders</Filter>
     </FxCompile>
-    <FxCompile Include="shaders\vskybox.hlsl">
+    <FxCompile Include="x64\shaders\texture_ps.hlsl">
       <Filter>Source Files\shaders</Filter>
     </FxCompile>
-    <FxCompile Include="shaders\vtexture.hlsl">
+    <FxCompile Include="x64\shaders\texture_vs.hlsl">
       <Filter>Source Files\shaders</Filter>
     </FxCompile>
   </ItemGroup>
