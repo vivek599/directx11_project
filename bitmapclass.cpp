@@ -24,16 +24,11 @@ bool BitmapClass::Initialize(ID3D11Device* device, HWND hwnd, int screenWidth, i
 	bool result;
 	
 	m_BitmapShader.reset( new BitmapShaderClass());
-	if (!m_BitmapShader)
-	{
-		return false;
-	}
+	assert(m_BitmapShader);
+
 	result = m_BitmapShader->Initialize(device, hwnd);
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize Bitmap shader object!", L"Error", MB_OK);
-		return false;
-	}
+	assert(result);
+
 
 
 	m_ScreenWidth = screenWidth;
@@ -46,16 +41,12 @@ bool BitmapClass::Initialize(ID3D11Device* device, HWND hwnd, int screenWidth, i
 	m_PrevPosY = -1;
 
 	result = InitializeBuffers(device);
-	if (!result)
-	{
-		return false;
-	}
+	assert(result);
+
 
 	result = LoadTexture(device, path);
-	if (!result)
-	{
-		return false;
-	}
+	assert(result);
+
 
 	return true;
 

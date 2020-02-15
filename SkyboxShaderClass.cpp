@@ -18,10 +18,8 @@ bool SkyboxShaderClass::Initialize(ID3D11Device* device)
 	bool result;
 
 	result = InitializeShader(device, GetActiveWindow(), (WCHAR*)L"../shaders/vskybox.hlsl", (WCHAR*)L"../shaders/pskybox.hlsl");
-	if (!result)
-	{
-		return false;
-	}
+	assert(result);
+
 
 	return true;
 }

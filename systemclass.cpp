@@ -30,39 +30,28 @@ bool SystemClass::Initialize()
 	InitializeWindows(screenWidth, screenHeight);
 
 	m_cpuUsage.reset ( new CpuUsageClass());
-	if (!m_cpuUsage)
-	{
-		return false;
-	}
+	assert(m_cpuUsage);
+
 	m_cpuUsage->Initialize();
 
 
 	m_Input.reset(new InputClass());
-	if (!m_Input)
-	{
-		return false;
-	}
+	assert(m_Input);
+
 
 	result = m_Input->Initialize(m_hInstance,m_hwnd, screenWidth, screenHeight );
-	if (!result)
-	{
-		MessageBox(m_hwnd, L"Could not initialize the direct input object.", L"Error", MB_OK);
-		return false;
-	}
+	assert(result);
+
 
 	m_Graphics.reset( new GraphicClass());
 
-	if (!m_Graphics)
-	{
-		return false;
-	}
+	assert(m_Graphics);
+
 
 	result = m_Graphics->Initialize(screenWidth, screenHeight, m_hwnd);
 
-	if (!result)
-	{
-		return false;
-	}
+	assert(result);
+
 
 	return true;
 
@@ -158,18 +147,14 @@ bool SystemClass::Frame()
 	m_cpuUsage->Frame();
 
 	result = m_Input->Frame(deltaTime);
-	if (!result)
-	{
-		return false;
-	}
+	assert(result);
+
 	int mouseX = int((xMousePos/1024.f)*360.f);//m_Input->GetMouseLoc().x;
 	int mouseY = int((yMousePos/768.f) * 360.f);//m_Input->GetMouseLoc().y;
 	
 	result = m_Graphics->Frame(deltaTime);
-	if (!result)
-	{
-		return false;
-	}
+	assert(result);
+
 
 	QueryPerformanceCounter(&t2);//counter end
 	deltaTime = (float)(t2.QuadPart - t1.QuadPart) / frequency.QuadPart; // in seconds

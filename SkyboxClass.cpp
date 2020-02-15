@@ -21,38 +21,27 @@ bool SkyboxClass::Initialize(ID3D11Device* device)
 
 	// Create the sky dome shader object.
 	m_skyboxShader.reset( new SkyboxShaderClass());
-	if (!m_skyboxShader)
-	{
-		return false;
-	}
+	assert(m_skyboxShader);
+
 
 	// Initialize the sky dome shader object.
 	result = m_skyboxShader->Initialize(device);
-	if (!result)
-	{
-		MessageBox(GetActiveWindow(), L"Could not initialize the sky box shader object.", L"Error", MB_OK);
-		return false;
-	}
+	assert(result);
+
 
 	// Load in the sky dome model.
 	result = LoadSkyboxModel("../Models/skybox/skybox1.obj"); 
-	if (!result)
-	{
-		return false;
-	}
+	assert(result);
+
 
 	// Load the sky dome into a vertex and index buffer for rendering.
 	result = InitializeBuffers(device);
-	if (!result)
-	{
-		return false;
-	}
+	assert(result);
+
 
 	result = LoadTexture(device, (WCHAR*)L"../Models/skybox/skybox.png");
-	if (!result)
-	{
-		return false;
-	}
+	assert(result);
+
 
 	return true;
 }

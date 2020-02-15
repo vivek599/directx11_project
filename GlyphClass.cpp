@@ -51,33 +51,22 @@ bool GlyphClass::Initialize(ID3D11Device* device, HWND hwnd, int screenWidth, in
 	m_StringToDraw = "@xyz";
 
 	m_fontTextureShader.reset( new FontShaderClass());
-	if (!m_fontTextureShader)
-	{
-		return false;
-	}
+	assert(m_fontTextureShader);
+
 
 	result = m_fontTextureShader->Initialize(device, hwnd);
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize font texture shader object!", L"Error", MB_OK);
-		return false;
-	}
+	assert(result);
+
 
 	m_ScreenWidth = screenWidth;
 	m_ScreenHeight = screenHeight;
 
 	result = InitializeBuffers(device);
-	if (!result)
-	{
-		return false;
-	}
+	assert(result);
+
 
 	result = LoadTexture(device, path);
-	if (!result)
-	{
-		return false;
-	}
-
+	assert(result);
 
 
 	return true;

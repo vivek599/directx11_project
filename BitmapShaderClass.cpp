@@ -22,10 +22,7 @@ bool BitmapShaderClass::Initialize(ID3D11Device* device, HWND hwnd)
 	bool result;
 
 	result = InitializeShaders(device, hwnd, (WCHAR*)L"../shaders/vtexture.hlsl", (WCHAR*)L"../shaders/ptexture.hlsl");
-	if (!result)
-	{
-		return false;
-	}
+	assert(result);
 
 	return true;
 

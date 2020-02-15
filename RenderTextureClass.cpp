@@ -85,10 +85,8 @@ bool RenderTextureClass::Initialize(ID3D11Device* device, int textureWidth, int 
 
 	// Create the texture for the depth buffer using the filled out description.
 	hr = device->CreateTexture2D(&depthBufferDesc, NULL, m_depthStencilBuffer.GetAddressOf());
-	if (FAILED(hr))
-	{
-		return false;
-	}
+	assert(SUCCEEDED(hr));
+ 
 
 	// Initailze the depth stencil view description.
 	ZeroMemory(&depthStencilViewDesc, sizeof(depthStencilViewDesc));
@@ -100,10 +98,8 @@ bool RenderTextureClass::Initialize(ID3D11Device* device, int textureWidth, int 
 
 	// Create the depth stencil view.
 	hr = device->CreateDepthStencilView(m_depthStencilBuffer.Get(), &depthStencilViewDesc, m_depthStencilView.GetAddressOf());
-	if (FAILED(hr))
-	{
-		return false;
-	}
+	assert(SUCCEEDED(hr));
+
 
 	// Setup the viewport for rendering.
 	m_viewport.Width = (float)textureWidth;

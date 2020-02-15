@@ -31,73 +31,52 @@ bool GraphicClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	bool result;
 	 
 	m_D3D.reset( new D3DClass());
-	if (!m_D3D)
-	{
-		return false;
-	}
+	assert(m_D3D);
+
 
 	result = m_D3D->Initialize(screenWidth, screenHeight, VSYNCE_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR );
 	
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize directx!", L"Error", MB_OK);
-		return false;
-	}
+	assert(result);
+ 
 
 	//write video card info to a file
 	m_D3D->WriteVideoCardInfoToFile();
 
 	m_Camera.reset(new CameraClass());
-	if (!m_Camera)
-	{
-		return false;
-	}
+	assert(m_Camera);
+ 
 	m_Camera->SetPosition(0.f, 0.f, -40.f);
 	m_Camera->Render(0.f);
 	m_Camera->GetViewMatrix(m_ViewMatrix2D);
 
 	// Create the frustum object.
 	m_frustum.reset( new FrustumClass());
-	if (!m_frustum)
-	{
-		return false;
-	}
+	assert(m_frustum);
+ 
 
 	m_Bitmap.reset(new BitmapClass());
-	if (!m_Bitmap)
-	{
-		return false;
-	}
+	assert(m_Bitmap);
+
 
 	result = m_Bitmap->Initialize(m_D3D->GetDevice().Get(), hwnd, screenWidth, screenHeight, (WCHAR*)L"../Textures/stone_wall1.jpg", 128, 128);
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize bitmap object!", L"Error", MB_OK);
-		return false;
-	}
+	assert(result);
+
 
 	m_Glyph.reset(new GlyphClass());
-	if (!m_Glyph)
-	{
-		return false;
-	}
+	assert(m_Glyph);
+
 
 	result = m_Glyph->Initialize(m_D3D->GetDevice().Get(), hwnd, screenWidth, screenHeight, (WCHAR*)L"../Font/AgencyFBFont_64x64.bmp" );
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize Glyph object!", L"Error", MB_OK);
-		return false;
-	}
+	assert(result);
+
 
  
 	
 
 	// Create the light object.
 	m_Light.reset( new LightClass());
-	if (!m_Light)
-	{
-		return false;
-	}
+	assert(m_Light);
+
 
 	// Initialize the light object.
 	m_Light->SetAmbientColor(0.5f, 0.5f, 0.5f, 1.0f);
@@ -111,17 +90,13 @@ bool GraphicClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	// Create the render to texture object.
 	m_renderTexture.reset( new RenderTextureClass());
-	if (!m_renderTexture)
-	{
-		return false;
-	}
+	assert(m_renderTexture);
+
 
 	// Initialize the render to texture object.
 	result = m_renderTexture->Initialize(m_D3D->GetDevice().Get(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_NEAR, SCREEN_DEPTH);
-	if (!result)
-	{
-		return false;
-	}
+	assert(result);
+
 
 #if 1
 
@@ -169,16 +144,11 @@ bool GraphicClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 	
 	m_skybox.reset( new SkyboxClass());
-	if (!m_skybox)
-	{
-		return false;
-	}
+	assert(m_skybox);
 
 	result = m_skybox->Initialize(m_D3D->GetDevice().Get());
-	if (!result)
-	{
-		return false;
-	}
+	assert(result);
+
 
 
 	return true;

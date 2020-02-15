@@ -57,31 +57,22 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsyncEnabled, 
 
 	//creat directx graphic interface factory
 	result = CreateDXGIFactory( IID_PPV_ARGS(factory.GetAddressOf()));
-	if (FAILED(result))
-	{
-		return false;
-	}
-
+	assert(SUCCEEDED(result));
+ 
 	//use factory to creat an adapter for primary graphic interface( video card )
 	result = factory->EnumAdapters(0, adapter.GetAddressOf());
-	if (FAILED(result))
-	{
-		return false;
-	}
+	assert(SUCCEEDED(result));
+
 
 	//enumerate primary adapter output (monitor)
 	result = adapter->EnumOutputs(0, adapterOutput.GetAddressOf());
-	if (FAILED(result))
-	{
-		return false;
-	}
+	assert(SUCCEEDED(result));
+
 	
 	//get the number of modes that fits DXGI_FORMAT_R8G8B8A8_UNORM display format for the monitor
 	result = adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, NULL);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	assert(SUCCEEDED(result));
+
 
 	displayModeList = new DXGI_MODE_DESC[numModes];
 	if (!displayModeList)
@@ -91,10 +82,8 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsyncEnabled, 
 
 	//fill the display mode list desc
 	result = adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, displayModeList);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	assert(SUCCEEDED(result));
+
 
 	for ( i = 0; i < numModes; i++)
 	{
@@ -110,10 +99,8 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsyncEnabled, 
 
 
 	result = adapter->GetDesc(&adapterDesc);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	assert(SUCCEEDED(result));
+
 
 	m_videoCardMemory = (int)adapterDesc.DedicatedVideoMemory / (1024*1024);
 	error = wcstombs_s(  &stringLength, m_videoCardDesc, 128, adapterDesc.Description, 128);
@@ -125,9 +112,7 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsyncEnabled, 
 	delete[] displayModeList;
 	displayModeList = 0;
 
-	adapterOutput.Reset();
-	adapter.Reset();
-	factory.Reset();
+ 
 
 	//init swap chain desc
 	ZeroMemory(&swapChainDesc, sizeof(swapChainDesc));
@@ -172,25 +157,18 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsyncEnabled, 
 	//create swap chain device and context
 	result = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, D3D11_CREATE_DEVICE_DEBUG, featureLevels, numFeaturelevels,
 		D3D11_SDK_VERSION, &swapChainDesc, m_swapChain.GetAddressOf(),  m_device.GetAddressOf(), &m_featureLevel, m_deviceContext.GetAddressOf() );
-	if (FAILED(result))
-	{
-		return false;
-	}
+	assert(SUCCEEDED(result));
+
 
 	result = m_swapChain->GetBuffer(0, IID_PPV_ARGS( backBufferPtr.GetAddressOf()));
-	if (FAILED(result))
-	{
-		return false;
-	}
+	assert(SUCCEEDED(result));
+
 
 	//create render target view with back buffer pointer
 	result = m_device->CreateRenderTargetView(backBufferPtr.Get(), NULL, m_renderTargetView.GetAddressOf() );
-	if (FAILED(result))
-	{
-		return false;
-	}
+	assert(SUCCEEDED(result));
 
-	backBufferPtr.Reset();
+ 
 
 	//depth buffer
 
@@ -210,10 +188,7 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsyncEnabled, 
 
 	//create texture for depth buffer
 	result = m_device->CreateTexture2D(&depthBufferDesc, NULL, m_depthStencilBuffer.GetAddressOf());
-	if (FAILED(result))
-	{
-		return false;
-	}
+	assert(SUCCEEDED(result));
 
 	//depth stencil state
 	ZeroMemory(&depthStencilDesc, sizeof(depthStencilDesc));
@@ -240,10 +215,8 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsyncEnabled, 
 
 	//create depth stencil state
 	result = m_device->CreateDepthStencilState(&depthStencilDesc, m_depthStencilState.GetAddressOf());
-	if (FAILED(result))
-	{
-		return false;
-	}
+	assert(SUCCEEDED(result));
+
 
 	m_deviceContext->OMSetDepthStencilState(m_depthStencilState.Get(), 1);
 
@@ -255,10 +228,8 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsyncEnabled, 
 	depthStencilViewDesc.Texture2D.MipSlice = 0;
 
 	result = m_device->CreateDepthStencilView(m_depthStencilBuffer.Get(), &depthStencilViewDesc, m_depthStencilView.GetAddressOf() );
-	if (FAILED(result))
-	{
-		return false;
-	}
+	assert(SUCCEEDED(result));
+
 
 	// bind the render target view and depth stencil buffer  to the output render pipeline
 	m_deviceContext->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), m_depthStencilView.Get());
@@ -275,10 +246,8 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsyncEnabled, 
 	rasterDesc.SlopeScaledDepthBias = 0.f;
 	
 	result = m_device->CreateRasterizerState(&rasterDesc, m_rasterState.GetAddressOf());
-	if (FAILED(result))
-	{
-		return false;
-	}
+	assert(SUCCEEDED(result));
+
 
 	m_deviceContext->RSSetState(m_rasterState.Get());
 
@@ -296,10 +265,8 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsyncEnabled, 
 
 	// Create the no culling rasterizer state.
 	result = m_device->CreateRasterizerState(&rasterDesc, m_rasterStateNoCulling.GetAddressOf());
-	if (FAILED(result))
-	{
-		return false;
-	}
+	assert(SUCCEEDED(result));
+
 
 	//viewport to entire size of window
 	m_viewport.Width = (float)screenWidth;
@@ -345,10 +312,8 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsyncEnabled, 
 	depthDisableStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
 	result = m_device->CreateDepthStencilState(&depthDisableStencilDesc, m_DepthDisableStencilState.GetAddressOf() );
-	if (FAILED(result))
-	{
-		return false;
-	}
+	assert(SUCCEEDED(result));
+
 
 
 	D3D11_BLEND_DESC blendStateDescription = {};
@@ -368,10 +333,8 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsyncEnabled, 
     blendStateDescription.RenderTarget[0].RenderTargetWriteMask = 0x0f;
 	// Create the blend state using the description.
 	result = m_device->CreateBlendState(&blendStateDescription, m_alphaEnableBlendingState.GetAddressOf());
-	if(FAILED(result))
-	{
-		return false;
-	}
+	assert(SUCCEEDED(result));
+
 	return true;
 
 }

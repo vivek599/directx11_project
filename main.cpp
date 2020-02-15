@@ -15,10 +15,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR psCmdLine,
 	bool result;
  
 	unique_ptr<SystemClass> system; system.reset( new SystemClass());
-	if (!system)
-	{
-		return 0;
-	}
+	assert(system);
+
 
 	result = system->Initialize();
 

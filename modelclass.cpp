@@ -39,52 +39,36 @@ bool ModelClass::Initialize(ID3D11Device* device, const char* modelFilename, con
 
 	// Create the light shader object.
 	m_ModelShader.reset( new ModelShaderClass());
-	if (!m_ModelShader)
-	{
-		return false;
-	}
+	assert(m_ModelShader);
+
 
 	// Initialize the light shader object.
 	result = m_ModelShader->Initialize(device, GetActiveWindow());
-	if (!result)
-	{
-		MessageBox(GetActiveWindow(), L"Could not initialize the ModelShaderClass object.", L"Error", MB_OK);
-		return false;
-	}
+	assert(result);
+
 
 	// Create the light shader object.
 	m_depthShader.reset(new DepthShaderClass());
-	if (!m_depthShader)
-	{
-		return false;
-	}
+	assert(m_depthShader);
+
 
 	// Initialize the m_depthShader shader object.
 	result = m_depthShader->Initialize(device, GetActiveWindow());
-	if (!result)
-	{
-		MessageBox(GetActiveWindow(), L"Could not initialize the DepthShaderClass object.", L"Error", MB_OK);
-		return false;
-	}
+	assert(result);
+
 
 	// Load in the model data,
 	result = LoadModel(modelFilename);
-	if (!result)
-	{
-		return false;
-	}
+	assert(result);
+
 
 	result = InitializeBuffers(device);
-	if (!result)
-	{
-		return false;
-	}
+	assert(result);
+
 
 	result = LoadTexture(device, textureFilename, normalFilename);
-	if (!result)
-	{
-		return false;
-	}
+	assert(result);
+
 
 	return true;
 
