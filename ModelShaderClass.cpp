@@ -66,7 +66,7 @@ bool ModelShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* 
 	D3D11_BUFFER_DESC lightBufferDesc, lightBufferDesc2; 
 	D3D11_BUFFER_DESC cameraBufferDesc;
 
-	hr = D3DCompileFromFile(vsFileName, NULL, NULL, "main", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, vertexShaderBuffer.GetAddressOf(), &errMsg);
+	hr = D3DCompileFromFile(vsFileName, NULL, NULL, "main", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, vertexShaderBuffer.GetAddressOf(), errMsg.GetAddressOf());
 	if (FAILED(hr))
 	{
 		if (errMsg)
@@ -81,7 +81,7 @@ bool ModelShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* 
 		return false;
 	}
 
-	hr = D3DCompileFromFile(psFileName, NULL, NULL, "main", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, pixelShaderBuffer.GetAddressOf(), &errMsg);
+	hr = D3DCompileFromFile(psFileName, NULL, NULL, "main", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, pixelShaderBuffer.GetAddressOf(), errMsg.GetAddressOf());
 	if (FAILED(hr))
 	{
 		if (errMsg)
@@ -253,23 +253,7 @@ bool ModelShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* 
 
 void ModelShaderClass::ShutdownShader()
 {
-	m_lightBuffer.Reset();
-
-	m_lightBuffer2.Reset();
-
-	m_cameraBuffer.Reset();
-
-	m_matrixBuffer.Reset();
-
-	m_sampleStateClamp.Reset();
-
-	m_samplerState.Reset();
-
-	m_inputLayout.Reset();
-
-	m_pixelShader.Reset();
-
-	m_vertexShader.Reset();
+ 
 
 }
 
@@ -313,6 +297,8 @@ bool ModelShaderClass::SetShaderParameter(ID3D11DeviceContext* context, int inde
 	world = XMMatrixTranspose(world);
 	view = XMMatrixTranspose(view);
 	proj = XMMatrixTranspose(proj);
+	lightViewMatrix = XMMatrixTranspose(lightViewMatrix);
+	lightProjectionMatrix = XMMatrixTranspose(lightProjectionMatrix);
 
 	hr = context->Map(m_matrixBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if (FAILED(hr))

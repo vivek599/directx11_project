@@ -72,15 +72,19 @@ void LightClass::GenerateViewMatrix()
 
 void LightClass::GenerateProjectionMatrix(float screenNear, float screenDepth)
 {
-	float fieldOfView, screenAspect;
-
-
 	// Setup field of view and screen aspect for a square light source.
-	fieldOfView = (float)XM_PI / 4.0f;
-	screenAspect = 1.0f;
+	float fieldOfView = XM_PI / 2.0f;
+	float screenAspect = 1.0f;
 
 	// Create the projection matrix for the light.
 	m_projectionMatrix = XMMatrixPerspectiveFovLH(fieldOfView, screenAspect, screenNear, screenDepth);
+
+}
+
+void LightClass::GenerateOrthoMatrix(float screenNear, float screenDepth)
+{
+	// Create the projection matrix for the light.
+	m_orthoMatrix = XMMatrixOrthographicLH(512.0f, 512.0f, screenNear, screenDepth);
 
 }
 
@@ -92,6 +96,11 @@ void LightClass::GetViewMatrix(Mat4& viewMatrix )
 void LightClass::GetProjectionMatrix(Mat4& projMatrix)
 {
 	projMatrix = (m_projectionMatrix);
+}
+
+void LightClass::GetOrthoMatrix(Mat4& orthoMatrix)
+{
+	orthoMatrix = (m_orthoMatrix);
 }
 
 Vector4 LightClass::GetAmbientColor()

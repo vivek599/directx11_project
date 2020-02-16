@@ -3,7 +3,7 @@
 
 SystemClass::SystemClass()
 {
-	deltaTime = 0.0;
+	m_deltaTime = 0.0;
 	m_typingDelay = 0.f;
 	m_Input = 0;
 	m_Graphics = 0;
@@ -76,15 +76,14 @@ void SystemClass::Run()
 	{
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE ))
 		{
-			if (msg.message == WM_QUIT)
-			{
-				done = true;
-			}
-			else
-			{
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
-			}
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+
+		// If windows signals to end the application then exit out.
+		if(msg.message == WM_QUIT)
+		{
+			done = true;
 		}
 		else
 		{
@@ -140,28 +139,47 @@ LRESULT CALLBACK SystemClass::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam
 bool SystemClass::Frame()
 {
 	bool result;
-
-	LARGE_INTEGER t1, t2; 		
-	QueryPerformanceCounter(&t1);//counter start
+	DxTime t; t.Start(); 
 	
 	m_cpuUsage->Frame();
 
-	result = m_Input->Frame(deltaTime);
+	result = m_Input->Frame(m_deltaTime);
 	assert(result);
 
 	int mouseX = int((xMousePos/1024.f)*360.f);//m_Input->GetMouseLoc().x;
 	int mouseY = int((yMousePos/768.f) * 360.f);//m_Input->GetMouseLoc().y;
 	
-	result = m_Graphics->Frame(deltaTime);
-	assert(result);
+	if (!m_pauseGameLoop)
+	{
+		result = m_Graphics->Frame(m_deltaTime);
+		assert(result);
+	}
 
+	m_deltaTime = t.End("")/1000.0f; // in seconds
 
-	QueryPerformanceCounter(&t2);//counter end
-	deltaTime = (float)(t2.QuadPart - t1.QuadPart) / frequency.QuadPart; // in seconds
 	//SetWindowTextA(m_hwnd, userInputString.c_str());
-	int fps = int(1 / deltaTime);
-	SetWindowTextA(m_hwnd, ( string("Cpu%: ") + to_string(m_cpuUsage->GetCpuPercentage()) + string(" DeltaTime: ") + to_string(deltaTime) + string(" FPS: ") + to_string(fps)
-		+ string(" mX: ") + to_string(mouseX) + string(" mY: ") + to_string(mouseY) + string(" Input: ") + userInputString ).c_str());
+	int fps = int(1.0f / m_deltaTime);
+	const int fpsSampls = 50;
+	static int avgFpsArray[fpsSampls] = {0};
+	static int avgFpsArrIndex = 0;
+
+	avgFpsArray[avgFpsArrIndex % fpsSampls] = fps;
+	avgFpsArrIndex++;
+	int avgFps = 0;
+
+	for (int i = 0; i < fpsSampls; i++)
+	{
+		avgFps += avgFpsArray[i];
+	}
+
+	avgFps /= fpsSampls;
+
+	SetWindowTextA(	m_hwnd, /*( string("Cpu%: ") + to_string(m_cpuUsage->GetCpuPercentage()) + */
+			  (string(" DeltaTime: ") + to_string(m_deltaTime) 
+			+ string(" FPS: ") + to_string(avgFps)
+			+ string(" mX: ") + to_string(mouseX) 
+			+ string(" mY: ") + to_string(mouseY) 
+			+ string(" Input: ") + userInputString ).c_str());
 
 	return true;
 }
@@ -242,6 +260,7 @@ void SystemClass::InitializeWindows(int& screenWidth, int& screenHeight)
 	SetFocus(m_hwnd);
 	
 	ShowCursor(true);
+	
 
 }
 

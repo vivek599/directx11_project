@@ -87,6 +87,7 @@ bool GraphicClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_Light->SetSpecularPower(32.0f);
 	m_Light->SetLookAt(0.0f, 0.0f, 0.0f);
 	m_Light->GenerateProjectionMatrix(SCREEN_NEAR, SCREEN_DEPTH);
+	m_Light->GenerateOrthoMatrix(SCREEN_NEAR, SCREEN_DEPTH);
 
 	// Create the render to texture object.
 	m_renderTexture.reset( new RenderTextureClass());
@@ -181,7 +182,7 @@ bool GraphicClass::Frame(float deltaTime)
 	
 	// Update the position of the light.
 	//m_Light->SetPosition( 15.f * sin(lightPositioncntr) , 8.0f, 15.f * cos(lightPositioncntr));
-	Vector3 lpos = Vector3( -15.f * sin(lightPositioncntr), 8.0f, -15.f * cos(lightPositioncntr)) * (1 + 0.5f * sin(lightPositioncntr));
+	Vector3 lpos = Vector3( -50.f * sin(lightPositioncntr), 50.0f, -50.f * cos(lightPositioncntr) /*)* (1 + 0.5f * sin(lightPositioncntr)*/);
 	m_Light->SetPosition(lpos.x, lpos.y, lpos.z);
 
 	result = Render(deltaTime);
@@ -284,11 +285,11 @@ bool GraphicClass::RenderScene(float deltaTime, bool depthPass)
 	bool result;
 	Mat4 world, view, projection, ortho;
 	Mat4 lightViewMatrix, lightProjectionMatrix;
-	static float rotation;
+	static float yaw;
 	static float angleCntr = 0;
 
 	angleCntr += deltaTime * 1.f;
-	rotation = (float)XM_PI * 0.41678f * sinf(angleCntr);
+	yaw = 180.0f * 0.41678f * sinf(angleCntr);
 
 	//clear buffer to begin scene
 	m_D3D->TurnZBufferOn();
@@ -332,12 +333,12 @@ bool GraphicClass::RenderScene(float deltaTime, bool depthPass)
 	}
 
 
-	m_Models[0]->SetRotation(Vector3(XM_PI * 0.5f, rotation, 0.f));
+	m_Models[0]->SetRotation(Vector3(90.0f, yaw, 0.f));
 	m_Models[0]->SetPosition(Vector3(-10.f, 0.f, 0.f));
 	m_Models[0]->SetScale3D(Vector3(8.f));
 
 	m_Models[1]->SetPosition(Vector3(10.f, 0.f, 0.f));
-	m_Models[1]->SetRotation(Vector3(0.f, -XM_PI * 0.5f + rotation, 0.f));
+	m_Models[1]->SetRotation(Vector3(0.f, -90.0f + yaw, 0.f));
 	m_Models[1]->SetScale3D(Vector3(2.f));
 
 	m_Models[3]->SetPosition(Vector3(0.f, 2.f, 0.f));

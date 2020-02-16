@@ -20,8 +20,8 @@ const bool VSYNCE_ENABLED = false;
 const float SCREEN_DEPTH = 1000.f;
 const float SCREEN_NEAR = 1.0f;
 
-const int SHADOWMAP_WIDTH = 512;
-const int SHADOWMAP_HEIGHT = 512;
+const int SHADOWMAP_WIDTH = 2048;
+const int SHADOWMAP_HEIGHT = 2048;
 
 class GraphicClass
 {

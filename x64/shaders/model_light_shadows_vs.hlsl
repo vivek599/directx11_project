@@ -40,7 +40,6 @@ struct PixelInputType
 	float3 viewDirection : TEXCOORD1; 
 	float4 lightViewPosition : TEXCOORD2;
 	float3 lightPos : TEXCOORD3;
-    float  dPos : TEXCOORD4;
 };
 
 PixelInputType main(VertexInputType input)
@@ -87,8 +86,6 @@ PixelInputType main(VertexInputType input)
 
 	// Normalize the viewing direction vector.
 	output.viewDirection = normalize(output.viewDirection);
-
-    output.dPos = -output.position.z / output.position.w * 0.5f + 0.5f;
     
 	return output;
 

@@ -41,7 +41,7 @@ private:
 	unique_ptr<GraphicClass> m_Graphics;
 
 	LARGE_INTEGER frequency;
-	float deltaTime;
+	float m_deltaTime;
 	float m_typingDelay;
 
 	unique_ptr < CpuUsageClass > m_cpuUsage;

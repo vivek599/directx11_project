@@ -7,9 +7,9 @@ CameraClass::CameraClass()
 	m_PositionY = 0.f;
 	m_PositionZ = 0.f;
 
-	m_RotationX = 0.f;
-	m_RotationY = 0.f;
-	m_RotationZ = 0.f;
+	m_Pitch = 0.f;
+	m_Yaw = 0.f;
+	m_Roll = 0.f;
 
 	m_forwardSpeed = 0.f;
 	m_upwardSpeed = 0.f;
@@ -17,6 +17,9 @@ CameraClass::CameraClass()
 	m_rightSpeed = 0.f;
 	m_downwardSpeed = 0.f;
 	m_backwardSpeed = 0.f;
+
+	m_lookAt = Vector3(0.f, 0.f, 1.f);
+	m_up = Vector3(0.f, 1.f, 0.f);
 
 }
 
@@ -39,9 +42,9 @@ void CameraClass::SetPosition(float x, float y, float z)
 
 void CameraClass::SetRotation(float x, float y, float z)
 {
-	m_RotationX = x;
-	m_RotationY = y;
-	m_RotationZ = z;
+	m_Pitch = x;
+	m_Yaw	= y;
+	m_Roll	= z;
 }
 
 Vector3 CameraClass::GetPosition()
@@ -51,18 +54,68 @@ Vector3 CameraClass::GetPosition()
 
 Vector3 CameraClass::GetRotation()
 {
-	return Vector3(m_RotationX, m_RotationY, m_RotationZ);
+	return Vector3(m_Pitch, m_Yaw, m_Roll);
 }
 
 void CameraClass::Update(float deltaTime)
 {
-	SetRotation( (BaseClass::xMousePos/1024)*360.f, (BaseClass::yMousePos/768)*360.f, 0.f );
+	POINT p = {0};
+	GetCursorPos(&p);
+
+	static POINT oldMouse = p;
+
+	static float pitch = 0.0f;
+	static float yaw = 0.0f;
+
+	pitch += (p.y - oldMouse.y) * 0.2f;
+	yaw += (p.x - oldMouse.x) * 0.2f;
+	SetRotation(pitch, yaw, 0.f);
+
+	oldMouse = p;
+ 
+
+
+
+
+
+
 	MoveCameraForward(BaseClass::m_moveCameraForward, deltaTime);
 	MoveCameraBackward(BaseClass::m_moveCameraBackward, deltaTime);
 	MoveCameraLeft(BaseClass::m_moveCameraLeft, deltaTime);
 	MoveCameraRight(BaseClass::m_moveCameraRight, deltaTime);
 	MoveCameraUpward(BaseClass::m_moveCameraUp, deltaTime);
 	MoveCameraDownward(BaseClass::m_moveCameraDown, deltaTime);
+}
+
+void CameraClass::MoveCameraForward(bool keydown, float deltaTime)
+{
+	if (keydown)
+	{
+		m_forwardSpeed += deltaTime * MOVEMENTSPEED;
+
+		if (m_forwardSpeed > (deltaTime * MOVEMENTSPEED * 2))
+		{
+			m_forwardSpeed = deltaTime * MOVEMENTSPEED * 2;
+		}
+	}
+	else
+	{
+		m_forwardSpeed -= deltaTime * MOVEMENTSPEED;
+
+		if (m_forwardSpeed < 0.0f)
+		{
+			m_forwardSpeed = 0.0f;
+		}
+	}
+
+	Vector3 dir = m_ViewMatrix.Backward();
+	dir.Normalize();
+
+	// Update the position.
+	m_PositionX += m_forwardSpeed * dir.x;
+	m_PositionY += m_forwardSpeed * dir.y * -1.0f;
+	m_PositionZ += m_forwardSpeed * dir.z;
+	//m_lookAt += m_forwardSpeed * m_ViewMatrix.Forward() * -1.0f;
 }
 
 void CameraClass::MoveCameraBackward(bool keydown, float deltaTime)
@@ -87,8 +140,14 @@ void CameraClass::MoveCameraBackward(bool keydown, float deltaTime)
 		}
 	}
 
+	Vector3 dir = m_ViewMatrix.Backward();
+	dir.Normalize();
+
 	// Update the position.
-	m_PositionZ -= m_backwardSpeed;
+	m_PositionX -= m_backwardSpeed * dir.x;
+	m_PositionY -= m_backwardSpeed * dir.y * -1.0f;
+	m_PositionZ -= m_backwardSpeed * dir.z;
+	//m_lookAt -= m_backwardSpeed * m_ViewMatrix.Forward() * -1.0f;
 }
 
 void CameraClass::MoveCameraUpward(bool keydown, float deltaTime)
@@ -143,31 +202,6 @@ void CameraClass::MoveCameraDownward(bool keydown, float deltaTime)
 	m_PositionY -= m_downwardSpeed;
 }
 
-void CameraClass::MoveCameraForward(bool keydown, float deltaTime)
-{
-	if (keydown)
-	{
-		m_forwardSpeed += deltaTime * MOVEMENTSPEED;
-
-		if (m_forwardSpeed > (deltaTime * MOVEMENTSPEED * 2))
-		{
-			m_forwardSpeed = deltaTime * MOVEMENTSPEED * 2;
-		}
-	}
-	else
-	{
-		m_forwardSpeed -= deltaTime * MOVEMENTSPEED;
-
-		if (m_forwardSpeed < 0.0f)
-		{
-			m_forwardSpeed = 0.0f;
-		}
-	}
-
-	// Update the position.
-	m_PositionZ += m_forwardSpeed;
-}
-
 void CameraClass::MoveCameraLeft(bool keydown, float deltaTime)
 {
 	if (keydown)
@@ -220,31 +254,19 @@ void CameraClass::MoveCameraRight(bool keydown, float deltaTime)
 
 void CameraClass::Render(float deltaTime)
 {
-	Vector3 up, position, lookAt;
-	float yaw, pitch, roll;
-	Mat4 rotationMatrix;
+	Vector3 position = Vector3(m_PositionX, m_PositionY, m_PositionZ);
 
-	up = Vector3(0.f, 1.f, 0.f);
-
-	position = Vector3(m_PositionX, m_PositionY, m_PositionZ);
-
-	lookAt = Vector3(0.f, 0.f, 1.f);
-
-	pitch = m_RotationX * DEG_TO_RAD;
-	yaw = m_RotationY * DEG_TO_RAD;
-	roll = m_RotationZ * DEG_TO_RAD;
-
-	XMVECTOR lookAtV = XMVECTOR(lookAt);
-	XMVECTOR upV = XMVECTOR(up);
-	XMVECTOR positionV = XMVECTOR(position);
+	float pitch = XMConvertToRadians(m_Pitch);
+	float yaw = XMConvertToRadians(m_Yaw);
+	float roll = XMConvertToRadians(m_Roll);
 	
-	rotationMatrix = XMMatrixRotationRollPitchYaw( pitch, yaw, roll );
-	lookAt = XMVector3TransformCoord( lookAtV, rotationMatrix);
-	up = XMVector3TransformCoord(upV, rotationMatrix);
+	Mat4 rotationMatrix = XMMatrixRotationRollPitchYaw( pitch, yaw, roll );
+	Vector3 lookAtNew = XMVector3TransformCoord(m_lookAt, rotationMatrix);
+	Vector3 upNew = XMVector3TransformCoord(m_up, rotationMatrix);
+	 
+	lookAtNew += position;
 
-	lookAt = lookAt + position;
-
-	m_ViewMatrix = XMMatrixLookAtLH(positionV, XMVECTOR(lookAt), XMVECTOR(up));
+	m_ViewMatrix = XMMatrixLookAtLH(position, lookAtNew, upNew);
 }
 
 void CameraClass::GetViewMatrix(Mat4& viewmatrix)

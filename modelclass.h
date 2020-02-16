@@ -80,7 +80,6 @@ private:
 	float m_rotationAngle;
 	float m_rotationRadius;
 	Vector3 m_rotationAxis;
-	bool m_bRotateAboutAxis;
 
 };
 

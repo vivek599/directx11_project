@@ -34,9 +34,12 @@ private:
 	float m_PositionY;
 	float m_PositionZ;
 
-	float m_RotationX;
-	float m_RotationY;
-	float m_RotationZ;
+	float m_Pitch;
+	float m_Yaw;
+	float m_Roll;
+
+	Vector3 m_lookAt;
+	Vector3 m_up;
 
 	Mat4 m_ViewMatrix;
 

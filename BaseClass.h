@@ -25,5 +25,7 @@ public:
 	static bool done;
 	static int xMousePos;
 	static int yMousePos;
+	static bool m_pauseGameLoop;
+
 };
 

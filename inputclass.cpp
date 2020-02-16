@@ -76,7 +76,8 @@ bool InputClass::Frame(float deltaTime)
 				break;
 
 			case VK_SPACE:
-				userInputString.push_back(' ');
+				//userInputString.push_back(' ');
+				m_pauseGameLoop = !m_pauseGameLoop;
 				break;
 
 			//case VK_DECIMAL:

@@ -12,6 +12,7 @@ bool BaseClass::m_moveCameraDown;
 bool BaseClass::done;
 int BaseClass::xMousePos;
 int BaseClass::yMousePos;
+bool BaseClass::m_pauseGameLoop;
 
 BaseClass::BaseClass()
 {
@@ -25,7 +26,7 @@ BaseClass::BaseClass()
 	m_moveCameraDown = false;
 	xMousePos = 0;
 	yMousePos = 0;
-
+	m_pauseGameLoop = false;
 }
 
 BaseClass::~BaseClass()

@@ -17,7 +17,6 @@ ModelClass::ModelClass(ID3D11Device* device, const char* modelFilename, const WC
 	m_depthShader = 0;
 	m_rotationAngle = 0.f;
 	m_rotationAxis = Vector3(0.f, 1.f, 0.f);
-	m_bRotateAboutAxis = false;
 	m_Position = Vector3(0.f);
 	m_Rotation = Vector3(0.f);
 	m_Scale3d = Vector3(1.f);
@@ -91,7 +90,7 @@ bool ModelClass::Render(ID3D11DeviceContext* context, RenderTextureClass* render
 	
 	RenderBuffers(context);
 
-	m_finalMatrix = world * XMMatrixRotationX(m_Rotation.x)* XMMatrixRotationY(m_Rotation.y)* XMMatrixRotationZ(m_Rotation.z)
+	m_finalMatrix = world * XMMatrixRotationRollPitchYaw(m_Rotation.x, m_Rotation.y, m_Rotation.z)
 						  * XMMatrixScaling(m_Scale3d.x, m_Scale3d.y, m_Scale3d.z)
 						  * XMMatrixTranslation(m_Position.x, m_Position.y, m_Position.z);
 	
@@ -120,13 +119,11 @@ void ModelClass::SetPosition(Vector3 position)
 
 void ModelClass::SetRotation(Vector3 rotation)
 {
-	m_bRotateAboutAxis = false;
-	m_Rotation = rotation;
+	m_Rotation = Vector3(XMConvertToRadians(rotation.x), XMConvertToRadians(rotation.y), XMConvertToRadians(rotation.z) );
 }
 
 void ModelClass::SetRotation(float angle, float radius,  Vector3 axis)
 {
-	m_bRotateAboutAxis = true;
 	m_rotationAxis = axis;// rotate(mat4 model(1.0), angle, rotation_axis);
 	m_rotationAngle = angle;
 	m_rotationRadius = radius;

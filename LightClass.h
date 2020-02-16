@@ -22,9 +22,11 @@ public:
 
 	void GenerateViewMatrix();
 	void GenerateProjectionMatrix(float screenNear, float screenDepth);
+	void GenerateOrthoMatrix(float screenNear, float screenDepth);
 
 	void GetViewMatrix(Mat4& viewMatrix);
 	void GetProjectionMatrix(Mat4& projMatrix);
+	void GetOrthoMatrix(Mat4& orthoMatrix);
 
 	Vector4 GetAmbientColor();
 	Vector4 GetDiffuseColor();
@@ -43,6 +45,7 @@ private:
 	Vector3 m_lookAt;
 	Mat4 m_viewMatrix;
 	Mat4 m_projectionMatrix;
+	Mat4 m_orthoMatrix;
 
 };
 
