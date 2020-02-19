@@ -46,7 +46,7 @@ float4 main(PixelInputType input) : SV_TARGET
 	//Shadow mapping requires a bias adjustment when comparing the depth of the light and the depth of the object due to the
 	//low floatingpoint precision of the depth map.
     // Set the bias value for fixing the floating point precision issues.
-    float bias = 0.001f;
+    float bias = 0.000001f;
 	
 	//Calculate the projected texture coordinates for sampling theshadowmap(depth buffer texture) based on the light's viewing position.
     //Calculate the projected texture coordinates.

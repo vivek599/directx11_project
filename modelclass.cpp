@@ -306,7 +306,7 @@ bool ModelClass::LoadModel(const char* modelFilename)
 		aiFace face = mesh->mFaces[i];
 		if (face.mNumIndices != 3 )
 		{
-			MessageBox( GetActiveWindow(),L"FACES 3 indices", L"Indices", MB_OK );
+			MessageBox( NULL,L"FACES 3 indices", L"Indices", MB_OK );
 			return false;
 		}
 

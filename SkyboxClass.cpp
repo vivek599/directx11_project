@@ -65,7 +65,7 @@ bool SkyboxClass::Render(ID3D11DeviceContext* context, Mat4 world, Mat4 view, Ma
 	RenderBuffers(context);
 
 	// Translate the sky dome to be centered around the camera position.
-	Mat4 m_finalMatrix = world * XMMatrixScaling(0.25f, 0.25f, 0.25f) * XMMatrixTranslation(cameraPosition.x, cameraPosition.y, cameraPosition.z);
+	Mat4 m_finalMatrix = world * XMMatrixScaling(8.0f, 8.0f, 8.0f) * XMMatrixTranslation(cameraPosition.x, cameraPosition.y, cameraPosition.z);
 
 	// Render the model using the model light shader.
 	result = m_skyboxShader->Render(context, GetIndexCount(), m_finalMatrix, view, proj, GetTexture().Get() );

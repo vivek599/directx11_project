@@ -73,7 +73,7 @@ void LightClass::GenerateViewMatrix()
 void LightClass::GenerateProjectionMatrix(float screenNear, float screenDepth)
 {
 	// Setup field of view and screen aspect for a square light source.
-	float fieldOfView = XM_PI / 2.0f;
+	float fieldOfView = XM_PI / 8.0f;
 	float screenAspect = 1.0f;
 
 	// Create the projection matrix for the light.
@@ -84,7 +84,7 @@ void LightClass::GenerateProjectionMatrix(float screenNear, float screenDepth)
 void LightClass::GenerateOrthoMatrix(float screenNear, float screenDepth)
 {
 	// Create the projection matrix for the light.
-	m_orthoMatrix = XMMatrixOrthographicLH(512.0f, 512.0f, screenNear, screenDepth);
+	m_orthoMatrix = XMMatrixOrthographicLH(2048.0f, 2048.0f, screenNear, screenDepth);
 
 }
 

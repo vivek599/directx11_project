@@ -250,6 +250,7 @@ void CameraClass::MoveCameraRight(bool keydown, float deltaTime)
 
 	// Update the position.
 	m_PositionX += m_rightSpeed;
+ 
 }
 
 void CameraClass::Render(float deltaTime)
