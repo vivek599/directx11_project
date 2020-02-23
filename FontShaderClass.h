@@ -8,7 +8,6 @@ class FontShaderClass
 {
 public:
 	FontShaderClass();
-	FontShaderClass(const FontShaderClass& obj);
 	~FontShaderClass();
 
 	bool Initialize(ID3D11Device* device, HWND hwnd);

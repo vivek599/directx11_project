@@ -7,12 +7,6 @@ FontShaderClass::FontShaderClass()
 
 }
 
-FontShaderClass::FontShaderClass(const FontShaderClass& obj)
-{
-	UNREFERENCED_PARAMETER(obj);
-
-}
-
 FontShaderClass::~FontShaderClass()
 {
 	Shutdown();

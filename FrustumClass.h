@@ -10,7 +10,6 @@ class FrustumClass
 {
 public:
 	FrustumClass();
-	FrustumClass(const FrustumClass& obj);
 	~FrustumClass();
 
 	void ConstructFrustum(float screenDepth, Mat4 projectionMatrix, Mat4 viewMatrix);

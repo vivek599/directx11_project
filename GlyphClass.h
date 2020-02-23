@@ -17,7 +17,6 @@ class GlyphClass : BaseClass
 {
 public:
 	GlyphClass();
-	GlyphClass(const GlyphClass& obj);
 	~GlyphClass();
 
 	bool Initialize(ID3D11Device* device, HWND hwnd, int screenWidth, int screenHeight, WCHAR* path );

@@ -7,11 +7,6 @@ BitmapShaderClass::BitmapShaderClass()
 
 }
 
-BitmapShaderClass::BitmapShaderClass(const BitmapShaderClass& obj)
-{
-	UNREFERENCED_PARAMETER(obj);
-}
-
 BitmapShaderClass::~BitmapShaderClass()
 {
 	Shutdown();

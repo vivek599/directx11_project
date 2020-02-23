@@ -7,12 +7,6 @@ TextureClass::TextureClass()
 
 }
 
-TextureClass::TextureClass(const TextureClass& obj)
-{
-	UNREFERENCED_PARAMETER(obj);
-
-}
-
 TextureClass::~TextureClass()
 {
 	Shutdown();

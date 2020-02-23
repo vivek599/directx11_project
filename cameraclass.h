@@ -2,13 +2,12 @@
 
 #include "commoninclude.h"
 #include "BaseClass.h"
-const float MOVEMENTSPEED = 8.f;
+const float MOVEMENTSPEED = 25.f;
 
 class CameraClass : BaseClass
 {
 public:
 	CameraClass();
-	CameraClass(const CameraClass& obj);
 	~CameraClass();
 
 	void SetPosition(float x, float y, float z);
@@ -30,9 +29,7 @@ public:
 	void GetViewMatrix(Mat4& viewmatrix);
 
 private:
-	float m_PositionX;
-	float m_PositionY;
-	float m_PositionZ;
+	Vector3 m_Position;
 
 	float m_Pitch;
 	float m_Yaw;

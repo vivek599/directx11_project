@@ -15,12 +15,6 @@ GlyphClass::GlyphClass()
 
 }
 
-GlyphClass::GlyphClass(const GlyphClass& obj)
-{
-
-	UNREFERENCED_PARAMETER(obj);
-}
-
 GlyphClass::~GlyphClass()
 {
 	Shutdown();

@@ -16,7 +16,6 @@ class SystemClass : BaseClass
 {
 public:
 	SystemClass();
-	SystemClass(const SystemClass& obj);
 	~SystemClass();
 
 	bool Initialize();

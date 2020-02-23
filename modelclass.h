@@ -16,7 +16,6 @@ class ModelClass : BaseClass
 {
 public:
 	ModelClass(ID3D11Device* device, const char* modelFilename, const WCHAR* texpath, const WCHAR* normalpath);
-	ModelClass(const ModelClass&);
 	~ModelClass();
 
 	void Shutdown();

@@ -21,7 +21,6 @@ private:
 
 public:
 	DepthShaderClass();
-	DepthShaderClass(const DepthShaderClass&);
 	~DepthShaderClass();
 
 	bool Initialize(ID3D11Device*, HWND);

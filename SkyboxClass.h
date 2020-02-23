@@ -7,7 +7,6 @@ class SkyboxClass
 {
 public:
 	SkyboxClass();
-	SkyboxClass(const SkyboxClass& obj);
 	~SkyboxClass();
 
 	bool Initialize(ID3D11Device* device);

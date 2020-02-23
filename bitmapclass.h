@@ -10,7 +10,6 @@ class BitmapClass
 {
 public:
 	BitmapClass();
-	BitmapClass(const BitmapClass&);
 	~BitmapClass();
 
 	bool Initialize(ID3D11Device* device, HWND hwnd, int screenWidth, int screenHeight, WCHAR* path, int bitmapWidth, int bitmapHeight);

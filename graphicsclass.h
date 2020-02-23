@@ -28,7 +28,6 @@ class GraphicClass
 
 public:
 	GraphicClass();
-	GraphicClass(const GraphicClass& obj);
 	~GraphicClass();
 
 	bool Initialize(int screenWidth, int screenHeight, HWND hwnd);

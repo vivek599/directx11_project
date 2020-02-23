@@ -7,7 +7,6 @@ class BitmapShaderClass
 {
 public:
 	BitmapShaderClass();
-	BitmapShaderClass(const BitmapShaderClass& obj);
 	~BitmapShaderClass();
 
 	bool Initialize(ID3D11Device* device, HWND hwnd);

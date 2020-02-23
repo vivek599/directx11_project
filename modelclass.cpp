@@ -2,12 +2,6 @@
 
 int ModelClass::m_polygonCount = 0;
 
-ModelClass::ModelClass(const ModelClass& obj)
-{
-	UNREFERENCED_PARAMETER(obj);
-
-}
-
 ModelClass::ModelClass(ID3D11Device* device, const char* modelFilename, const WCHAR* texpath, const WCHAR* normalpath)
 {
 

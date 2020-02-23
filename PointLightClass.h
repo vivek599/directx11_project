@@ -7,7 +7,6 @@ class PointLightClass
 {
 public:
 	PointLightClass();
-	PointLightClass(const PointLightClass&obj);
 	~PointLightClass();
 
 	void SetDiffuseColor(float r, float g, float b, float a);

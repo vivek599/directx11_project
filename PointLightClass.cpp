@@ -7,12 +7,6 @@ PointLightClass::PointLightClass()
 
 }
 
-PointLightClass::PointLightClass(const PointLightClass& obj)
-{
-	UNREFERENCED_PARAMETER(obj);
-
-}
-
 PointLightClass::~PointLightClass()
 {
 

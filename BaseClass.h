@@ -11,7 +11,6 @@ class BaseClass
 {
 public:
 	BaseClass();
-	BaseClass(const BaseClass& obj);
 	~BaseClass();
 
 	wstring GetOpenFilePathFromDialog();

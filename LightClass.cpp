@@ -6,12 +6,6 @@ LightClass::LightClass()
 {
 }
 
-LightClass::LightClass(const LightClass& obj)
-{
-	UNREFERENCED_PARAMETER(obj);
-
-}
-
 LightClass::~LightClass()
 {
 

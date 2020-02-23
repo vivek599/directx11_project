@@ -7,13 +7,6 @@ RenderTextureClass::RenderTextureClass()
  
 }
 
-
-RenderTextureClass::RenderTextureClass(const RenderTextureClass& obj)
-{
-	UNREFERENCED_PARAMETER(obj);
-
-}
-
 RenderTextureClass::~RenderTextureClass()
 {
 	Shutdown();

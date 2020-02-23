@@ -9,7 +9,6 @@ class TextureClass
 {
 public:
 	TextureClass();
-	TextureClass(const TextureClass& obj);
 	~TextureClass();
 
 	bool Initialize(ID3D11Device* device, const WCHAR* path);

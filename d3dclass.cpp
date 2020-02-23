@@ -9,12 +9,6 @@ D3DClass::D3DClass()
 	 
 }
 
-D3DClass::D3DClass(const D3DClass& obj)
-{
-
-	UNREFERENCED_PARAMETER(obj);
-}
-
 D3DClass::~D3DClass()
 {
 	Shutdown();

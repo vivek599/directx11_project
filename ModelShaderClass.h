@@ -7,7 +7,6 @@ class ModelShaderClass
 {
 public:
 	ModelShaderClass();
-	ModelShaderClass(const ModelShaderClass& obj);
 	~ModelShaderClass();
 
  

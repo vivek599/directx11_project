@@ -7,12 +7,6 @@ InputClass::InputClass()
 
 }
 
-InputClass::InputClass(const InputClass& obj)
-{
-	UNREFERENCED_PARAMETER(obj);
-
-}
-
 InputClass::~InputClass()
 {
 	Shutdown();

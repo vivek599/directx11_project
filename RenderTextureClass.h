@@ -6,7 +6,6 @@ class RenderTextureClass
 {
 public:
 	RenderTextureClass();
-	RenderTextureClass(const RenderTextureClass& obj);
 	~RenderTextureClass();
 
 	bool Initialize(ID3D11Device* device, int textureWidth, int textureHeight, float screenNear, float screenDepth);

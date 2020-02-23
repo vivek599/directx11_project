@@ -10,7 +10,6 @@ class InputClass : BaseClass
 	
 public:
 	InputClass();
-	InputClass(const InputClass& obj);
 	~InputClass();
 
 	bool Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeight);

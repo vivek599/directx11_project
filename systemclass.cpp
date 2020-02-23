@@ -10,12 +10,6 @@ SystemClass::SystemClass()
 	m_cpuUsage = 0;
 }
 
-SystemClass::SystemClass(const SystemClass& obj)
-{
-	UNREFERENCED_PARAMETER(obj);
-
-}
-
 SystemClass::~SystemClass()
 {
 	Shutdown();

@@ -7,13 +7,6 @@ FrustumClass::FrustumClass()
 
 }
 
-
-FrustumClass::FrustumClass(const FrustumClass& obj)
-{
-
-	UNREFERENCED_PARAMETER(obj);
-}
-
 FrustumClass::~FrustumClass()
 {
 

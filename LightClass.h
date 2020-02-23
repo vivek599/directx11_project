@@ -7,7 +7,6 @@ class LightClass
 {
 public:
 	LightClass();
-	LightClass(const LightClass& obj);
 	~LightClass();
 
 	void SetSpecularColor(float r, float g, float b, float a);

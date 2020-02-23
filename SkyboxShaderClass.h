@@ -6,7 +6,6 @@ class SkyboxShaderClass
 {
 public:
 	SkyboxShaderClass();
-	SkyboxShaderClass(const SkyboxShaderClass& obj);
 	~SkyboxShaderClass();
 
 	struct MatrixBufferType

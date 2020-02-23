@@ -9,12 +9,6 @@ ModelShaderClass::ModelShaderClass()
 
 }
 
-ModelShaderClass::ModelShaderClass(const ModelShaderClass& obj)
-{
-	UNREFERENCED_PARAMETER(obj);
-
-}
-
 ModelShaderClass::~ModelShaderClass()
 {
 	Shutdown();

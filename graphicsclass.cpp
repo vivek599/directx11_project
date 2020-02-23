@@ -4,21 +4,9 @@
 
 GraphicClass::GraphicClass()
 {
-	m_D3D = 0;
-	m_Camera = 0;
+ 
 	m_Models.clear();
-	m_skybox = 0;
-	m_frustum = 0;
-	m_Bitmap = 0;
-	m_renderTexture = 0;
-	m_Glyph = 0;
-	m_Light = 0; 
-}
-
-GraphicClass::GraphicClass(const GraphicClass& obj)
-{
-
-	UNREFERENCED_PARAMETER(obj);
+ 
 }
 
 GraphicClass::~GraphicClass()
@@ -345,6 +333,8 @@ bool GraphicClass::RenderScene(float deltaTime, bool depthPass)
 
 	m_Models[3]->SetPosition(Vector3(0.f, 2.f, 0.f));
 	m_Models[3]->SetScale3D(Vector3(2.f));
+
+	m_Models[4]->SetPosition(Vector3(0.f, -0.2f, 0.f));
 
 	for (int i = 0; i < m_Models.size(); i++)
 	{

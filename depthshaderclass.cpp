@@ -9,13 +9,6 @@ DepthShaderClass::DepthShaderClass()
  
 }
 
-
-DepthShaderClass::DepthShaderClass(const DepthShaderClass& other)
-{
-	UNREFERENCED_PARAMETER(other);
-}
-
-
 DepthShaderClass::~DepthShaderClass()
 {
 	Shutdown();

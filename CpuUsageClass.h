@@ -9,7 +9,6 @@ class CpuUsageClass
 {
 public:
 	CpuUsageClass();
-	CpuUsageClass(const CpuUsageClass& obj);
 	~CpuUsageClass();
 
 	void Initialize();

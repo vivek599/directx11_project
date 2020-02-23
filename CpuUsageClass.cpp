@@ -6,13 +6,6 @@ CpuUsageClass::CpuUsageClass()
 {
 }
 
-
-CpuUsageClass::CpuUsageClass(const CpuUsageClass& obj)
-{
-	UNREFERENCED_PARAMETER(obj);
-
-}
-
 CpuUsageClass::~CpuUsageClass()
 {
 	Shutdown();

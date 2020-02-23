@@ -8,7 +8,6 @@ class D3DClass
 {
 public:
 	D3DClass();
-	D3DClass(const D3DClass& obj);
 	~D3DClass();
 
 	bool Initialize(int screenWidth, int screenHeight, bool vsyncEnabled, HWND hwnd, bool full_screen,
