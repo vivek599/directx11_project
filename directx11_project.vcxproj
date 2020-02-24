@@ -174,10 +174,11 @@
     <ClCompile Include="modelclass.cpp" />
     <ClCompile Include="ModelShaderClass.cpp" />
     <ClCompile Include="PointLightClass.cpp" />
+    <ClCompile Include="RawMouse.cpp" />
     <ClCompile Include="RenderTextureClass.cpp" />
     <ClCompile Include="SkyboxClass.cpp" />
     <ClCompile Include="SkyboxShaderClass.cpp" />
-    <ClCompile Include="systemclass.cpp" />
+    <ClCompile Include="WindowClass.cpp" />
     <ClCompile Include="textureclass.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -199,10 +200,11 @@
     <ClInclude Include="modelclass.h" />
     <ClInclude Include="ModelShaderClass.h" />
     <ClInclude Include="PointLightClass.h" />
+    <ClInclude Include="RawMouse.h" />
     <ClInclude Include="RenderTextureClass.h" />
     <ClInclude Include="SkyboxClass.h" />
     <ClInclude Include="SkyboxShaderClass.h" />
-    <ClInclude Include="systemclass.h" />
+    <ClInclude Include="WindowClass.h" />
     <ClInclude Include="textureclass.h" />
   </ItemGroup>
   <ItemGroup>

@@ -1,22 +1,17 @@
 #pragma once
 
-#define WIN32_LEAN_AND_MEAN
-
-#include <Windows.h>
-#include <WindowsX.h>
-
-#include "BaseClass.h"
+#include "RawMouse.h"
 
 #include "inputclass.h"
 #include "graphicsclass.h"
 #include "CpuUsageClass.h"
 
 
-class SystemClass : BaseClass
+class WindowClass : BaseClass
 {
 public:
-	SystemClass();
-	~SystemClass();
+	WindowClass();
+	~WindowClass();
 
 	bool Initialize();
 	void Shutdown();
@@ -44,12 +39,10 @@ private:
 	float m_typingDelay;
 
 	unique_ptr < CpuUsageClass > m_cpuUsage;
-
-
 };
 
 
 static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
-static SystemClass* appHandle = 0;
+static WindowClass* appHandle = 0;
 

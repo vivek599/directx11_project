@@ -222,7 +222,7 @@ bool GraphicClass::Render(float deltaTime)
 	}
 
 	//render glyph
-	result = m_Glyph->Render(m_D3D->GetDeviceContext().Get(), 260, 100, world, m_ViewMatrix2D, ortho);
+	result = m_Glyph->Render(m_D3D->GetDeviceContext().Get(), 10, 10, world, m_ViewMatrix2D, ortho);
 	if (!result)
 	{
 		return false;

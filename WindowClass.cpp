@@ -1,7 +1,7 @@
-#include "systemclass.h"
+#include "WindowClass.h"
 
 
-SystemClass::SystemClass()
+WindowClass::WindowClass()
 {
 	m_deltaTime = 0.0;
 	m_typingDelay = 0.f;
@@ -10,12 +10,12 @@ SystemClass::SystemClass()
 	m_cpuUsage = 0;
 }
 
-SystemClass::~SystemClass()
+WindowClass::~WindowClass()
 {
 	Shutdown();
 }
 
-bool SystemClass::Initialize()
+bool WindowClass::Initialize()
 {
 	int screenWidth = 0, screenHeight = 0;
 	bool result;
@@ -46,6 +46,7 @@ bool SystemClass::Initialize()
 
 	assert(result);
 
+	m_rawMouse.Initialize(m_hwnd);
 
 	return true;
 
@@ -53,12 +54,12 @@ bool SystemClass::Initialize()
 
 }
 
-void SystemClass::Shutdown()
+void WindowClass::Shutdown()
 {
 	ShutdownWindows();
 }
 
-void SystemClass::Run()
+void WindowClass::Run()
 {
 	MSG msg;
 	bool result;
@@ -95,10 +96,22 @@ void SystemClass::Run()
 
 }
 
-LRESULT CALLBACK SystemClass::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam)
+LRESULT CALLBACK WindowClass::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam)
 {
+	if (umsg != WM_INPUT)
+	{
+		m_rawMouse.Clear();
+	}
+
 	switch (umsg)
 	{
+		case WM_INPUT:
+		{
+			m_rawMouse.update(lparam);
+			userInputString = m_rawMouse.m_mouseDataString;
+			return 0;
+		}
+
 		case WM_CHAR:
 		{
 			//if ((HIWORD(lparam) & KF_REPEAT) == 0)
@@ -116,21 +129,15 @@ LRESULT CALLBACK SystemClass::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam
 			return 0;
 		}
 
-		case WM_MOUSEMOVE:
-		{
-			xMousePos = GET_X_LPARAM(lparam);
-			yMousePos = GET_Y_LPARAM(lparam);
-
-			return 0;
-		}
-
 		default:
-			return DefWindowProc(hwnd,umsg, wparam, lparam);
+		{
+			return DefWindowProc(hwnd, umsg, wparam, lparam);
+		}
 	}
 
 }
 
-bool SystemClass::Frame()
+bool WindowClass::Frame()
 {
 	bool result;
 	DxTime t; t.Start(); 
@@ -174,16 +181,17 @@ bool SystemClass::Frame()
 			+ string(" mX: ") + to_string(mouseX) 
 			+ string(" mY: ") + to_string(mouseY) 
 			+ string(" Input: ") + userInputString ).c_str());
-
+	
+	//m_mouseRaw = {};
 	return true;
 }
 
-void SystemClass::ProcessKeyboardAndMouseEvents()
+void WindowClass::ProcessKeyboardAndMouseEvents()
 {
 	
 }
 
-void SystemClass::InitializeWindows(int& screenWidth, int& screenHeight)
+void WindowClass::InitializeWindows(int& screenWidth, int& screenHeight)
 {
 	WNDCLASSEX wc;
 	DEVMODE dmScreenSettings;
@@ -258,7 +266,7 @@ void SystemClass::InitializeWindows(int& screenWidth, int& screenHeight)
 
 }
 
-void SystemClass::ShutdownWindows()
+void WindowClass::ShutdownWindows()
 {
 	ShowCursor(true);
 

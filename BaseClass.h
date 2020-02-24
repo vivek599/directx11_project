@@ -1,10 +1,6 @@
 #pragma once
 
-#include <Windows.h>
-#include <shobjidl.h> //open file dialog
-
-#include <string>
-using namespace std;
+#include "RawMouse.h"
 
 
 class BaseClass
@@ -25,6 +21,6 @@ public:
 	static int xMousePos;
 	static int yMousePos;
 	static bool m_pauseGameLoop;
-
+	static RawMouse m_rawMouse;
 };
 

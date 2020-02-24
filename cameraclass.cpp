@@ -7,13 +7,6 @@ CameraClass::CameraClass()
 	m_Yaw = 0.f;
 	m_Roll = 0.f;
 
-	m_forwardSpeed = 0.f;
-	m_upwardSpeed = 0.f;
-	m_LeftSpeed = 0.f;
-	m_rightSpeed = 0.f;
-	m_downwardSpeed = 0.f;
-	m_backwardSpeed = 0.f;
-
 	m_lookAt = Vector3(0.f, 0.f, 1.f);
 	m_up = Vector3(0.f, 1.f, 0.f);
 
@@ -50,22 +43,32 @@ Vector3 CameraClass::GetRotation()
 
 void CameraClass::Update(float deltaTime)
 {
-	POINT p = {0};
-	GetCursorPos(&p);
+	Fly(deltaTime);
 
-	static POINT oldMouse = p;
+}
 
+void CameraClass::Render(float deltaTime)
+{
+	m_ViewMatrix = XMMatrixLookAtLH(m_Position, m_lookAt, m_up);
+}
+
+void CameraClass::GetViewMatrix(Mat4& viewmatrix)
+{
+	viewmatrix = m_ViewMatrix;
+}
+
+void CameraClass::Fly(float deltaTime)
+{
 	static float pitch = 0.0f;
 	static float yaw = 0.0f;
 
-	pitch += (p.y - oldMouse.y) * 0.2f;
-	yaw += (p.x - oldMouse.x) * 0.2f;
+	pitch += float(m_rawMouse.GetDeltaY()) * MOUSESPEED * deltaTime;
+	yaw += float(m_rawMouse.GetDeltaX()) * MOUSESPEED * deltaTime;
+
 	SetRotation(pitch, yaw, 0.f);
 
-	oldMouse = p;
-
 	float distance = MOVEMENTSPEED * deltaTime;
-	
+
 	Vector3 forward = m_lookAt - m_Position;
 	forward.Normalize();
 
@@ -74,7 +77,7 @@ void CameraClass::Update(float deltaTime)
 	m_lookAt.x += sin(XMConvertToRadians(m_Yaw));
 	m_lookAt.z += cos(XMConvertToRadians(m_Yaw));
 	m_lookAt.y -= sin(XMConvertToRadians(m_Pitch));
-	
+
 	Vector3 right = m_up.Cross(forward);
 	right.Normalize();
 
@@ -96,32 +99,21 @@ void CameraClass::Update(float deltaTime)
 		m_lookAt -= distance * right;
 	}
 
-	if (BaseClass::m_moveCameraRight) 
+	if (BaseClass::m_moveCameraRight)
 	{
 		m_Position += distance * right;
 		m_lookAt += distance * right;
 	}
 
-	if (BaseClass::m_moveCameraUp) 
+	if (BaseClass::m_moveCameraUp)
 	{
 		m_Position.y += distance;
 		m_lookAt.y += distance;
 	}
 
-	if (BaseClass::m_moveCameraDown) 
+	if (BaseClass::m_moveCameraDown)
 	{
 		m_Position.y -= distance;
 		m_lookAt.y -= distance;
 	}
-
-}
-
-void CameraClass::Render(float deltaTime)
-{
-	m_ViewMatrix = XMMatrixLookAtLH(m_Position, m_lookAt, m_up);
-}
-
-void CameraClass::GetViewMatrix(Mat4& viewmatrix)
-{
-	viewmatrix = m_ViewMatrix;
 }

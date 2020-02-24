@@ -1,5 +1,10 @@
 #pragma once
 
+#define WIN32_LEAN_AND_MEAN
+
+#include <Windows.h>
+#include <shobjidl.h> //open file dialog
+
 #include <d3d11.h>
 #include <dxgi.h>
 #include <d3dcommon.h>
@@ -28,6 +33,7 @@
 
 #include <wrl/client.h>
 using Microsoft::WRL::ComPtr;
+
 #include "Logger.h"
 
 
@@ -44,3 +50,5 @@ const float DEG_TO_RAD = 0.0174532925f;
 #define DXASSERT(a) assert(SUCCEEDED(a))
 
 //#include <vld.h>
+
+

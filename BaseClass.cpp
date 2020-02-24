@@ -13,6 +13,7 @@ bool BaseClass::done;
 int BaseClass::xMousePos;
 int BaseClass::yMousePos;
 bool BaseClass::m_pauseGameLoop;
+RawMouse BaseClass::m_rawMouse;
 
 BaseClass::BaseClass()
 {
@@ -27,6 +28,8 @@ BaseClass::BaseClass()
 	xMousePos = 0;
 	yMousePos = 0;
 	m_pauseGameLoop = false;
+	m_rawMouse = {};
+
 }
 
 BaseClass::~BaseClass()

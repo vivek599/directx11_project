@@ -224,11 +224,11 @@ bool GlyphClass::UpdateBuffers(ID3D11DeviceContext* context, int posX, int posY)
 
 		int cx = int ( m_StringToDraw[i] ) % 16;
 		int cy = int ( m_StringToDraw[i] ) / 16;
-
-		if (m_StringToDraw[i] == char(0x0D) || ( (i >= ( m_LineLocalWidth * (m_NewlineCounter + 1) ) + itrOffset ) && (userInputString != "") )  )
+		bool bNewLine = /*m_StringToDraw[i] == char(0x0D) || */m_StringToDraw[i] == char(0x0A);
+		if ( bNewLine || ( (i >= ( m_LineLocalWidth * (m_NewlineCounter + 1) ) + itrOffset ) && (userInputString != "") )  )
 		{
 			m_PosOffsetX = 0.f;
-			if (m_StringToDraw[i] == char(0x0D))
+			if (bNewLine)
 			{
 				m_EnterKeyCounter++;
 				itrOffset = i % m_LineLocalWidth + 1;
@@ -239,6 +239,7 @@ bool GlyphClass::UpdateBuffers(ID3D11DeviceContext* context, int posX, int posY)
 			}
 
 			m_PosOffsetY = (glyphBlockWidth + 4.f) * (m_NewlineCounter + m_EnterKeyCounter);
+			continue;
 		}
 
 		float tex_left = (float)cx * (1.f / 16.f);
