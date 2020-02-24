@@ -32,5 +32,6 @@ private:
 	RAWINPUTDEVICE ridMouse;
 	RAWINPUT m_mouseRaw;
 	bool m_buttonHeld;
+	vector<byte> rawData;
 };
 
