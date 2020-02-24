@@ -15,6 +15,7 @@ public:
 	void ConstructFrustum(float screenDepth, Mat4 projectionMatrix, Mat4 viewMatrix);
 
 	bool CheckPoint(float x, float y, float z);
+	bool CheckBox(Vector3 vmin, Vector3 vmax);
 	bool CheckCube(float xCenter, float yCenter, float zCenter, float radius);
 	bool CheckSphere(float xCenter, float yCenter, float zCenter, float radius);
 	bool CheckRectangle(float xCenter, float yCenter, float zCenter, float xSize, float ySize, float zSize);

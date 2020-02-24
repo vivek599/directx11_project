@@ -100,7 +100,7 @@ LRESULT CALLBACK WindowClass::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam
 {
 	if (umsg != WM_INPUT)
 	{
-		m_rawMouse.Clear();
+		//m_rawMouse.Clear();
 	}
 
 	switch (umsg)
@@ -183,6 +183,8 @@ bool WindowClass::Frame()
 			+ string(" Input: ") + userInputString ).c_str());
 	
 	//m_mouseRaw = {};
+	m_rawMouse.Clear();
+
 	return true;
 }
 

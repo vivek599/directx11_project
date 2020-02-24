@@ -335,11 +335,12 @@ bool GraphicClass::RenderScene(float deltaTime, bool depthPass)
 	m_Models[3]->SetScale3D(Vector3(2.f));
 
 	m_Models[4]->SetPosition(Vector3(0.f, -0.2f, 0.f));
+	m_Models[4]->SetScale3D(Vector3(2.0f, 2.0f, 2.0f));
 
 	for (int i = 0; i < m_Models.size(); i++)
 	{
 		Vector3 pos = m_Models[i]->GetPosition();
-		if (m_frustum->CheckPoint(pos.x, pos.y, pos.z))
+		if (m_frustum->CheckBox(m_Models[i]->GetBBox().min, m_Models[i]->GetBBox().max))
 		{
 			result = m_Models[i]->Render(m_D3D->GetDeviceContext().Get(), m_renderTexture.get(), m_Light.get(), m_Camera.get(), world, view, projection, lightViewMatrix, lightProjectionMatrix, depthPass);
 			if (!result)

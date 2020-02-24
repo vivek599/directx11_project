@@ -4,7 +4,7 @@ int ModelClass::m_polygonCount = 0;
 
 ModelClass::ModelClass(ID3D11Device* device, const char* modelFilename, const WCHAR* texpath, const WCHAR* normalpath)
 {
-
+	m_box = {};
 	m_Texture[0] = 0;
 	m_Texture[1] = 0;
 	m_ModelShader = 0;
@@ -265,6 +265,11 @@ bool ModelClass::LoadModel(const char* modelFilename)
 	aiMesh* mesh = pScene->mMeshes[0];
 
 	m_VertexCount = mesh->mNumVertices;
+
+	m_box.max.x = m_box.min.x = mesh->mVertices[0].x;
+	m_box.max.y = m_box.min.y = mesh->mVertices[0].y;
+	m_box.max.z = m_box.min.z = mesh->mVertices[0].z;
+
 	// Walk through each of the mesh's vertices
 	for (UINT i = 0; i < m_VertexCount; i++)
 	{
@@ -273,6 +278,13 @@ bool ModelClass::LoadModel(const char* modelFilename)
 		vertex.position.x = mesh->mVertices[i].x;
 		vertex.position.y = mesh->mVertices[i].y;
 		vertex.position.z = mesh->mVertices[i].z;
+
+		if (vertex.position.x < m_box.min.x) m_box.min.x = vertex.position.x;
+		if (vertex.position.y < m_box.min.y) m_box.min.y = vertex.position.y;
+		if (vertex.position.z < m_box.min.z) m_box.min.z = vertex.position.z;
+		if (vertex.position.x > m_box.max.x) m_box.max.x = vertex.position.x;
+		if (vertex.position.y > m_box.max.y) m_box.max.y = vertex.position.y;
+		if (vertex.position.z > m_box.max.z) m_box.max.z = vertex.position.z;
 
 		//if (mesh->mTextureCoords[0])
 		{

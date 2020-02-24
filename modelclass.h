@@ -14,6 +14,14 @@
 
 class ModelClass : BaseClass
 {
+
+private:
+	struct boundingBox
+	{
+		Vector3 min;
+		Vector3 max;
+	}m_box;
+
 public:
 	ModelClass(ID3D11Device* device, const char* modelFilename, const WCHAR* texpath, const WCHAR* normalpath);
 	~ModelClass();
@@ -32,6 +40,7 @@ public:
 	ComPtr<ID3D11ShaderResourceView> GetTexture();
 	ID3D11ShaderResourceView** GetTextureArray();
 	static int m_polygonCount;
+	boundingBox GetBBox() { return m_box; }
 protected:
 private:
 
@@ -79,7 +88,6 @@ private:
 	float m_rotationAngle;
 	float m_rotationRadius;
 	Vector3 m_rotationAxis;
-
 };
 
 

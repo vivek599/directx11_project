@@ -37,7 +37,7 @@ void RawMouse::update(LPARAM lparam)
 	RAWINPUT * raw = (RAWINPUT*)rawData.data();
 	if (raw->header.dwType == RIM_TYPEMOUSE)
 	{
-		if ( raw->data.mouse.lLastX != 0 || raw->data.mouse.lLastY != 0)
+		//if ( raw->data.mouse.lLastX != 0 || raw->data.mouse.lLastY != 0)
 		{
 			m_mouseRaw = *raw;
 			char mData[7][260];

@@ -87,6 +87,59 @@ bool FrustumClass::CheckPoint(float x, float y, float z)
 	return true;
 }
 
+bool FrustumClass::CheckBox(Vector3 vmin, Vector3 vmax)
+{
+	int i;
+
+	// Check if any one point of the box is in the view frustum.
+	for (i = 0; i < 6; i++)
+	{
+		if (XMPlaneDotCoord(m_planes[i], Vector3( vmin.x, vmin.y, vmin.z)).m128_f32[0] >= 0.0f)
+		{
+			continue;
+		}
+
+		if (XMPlaneDotCoord(m_planes[i], Vector3( vmax.x, vmin.y, vmin.z)).m128_f32[0] >= 0.0f)
+		{
+			continue;
+		}
+
+		if (XMPlaneDotCoord(m_planes[i], Vector3( vmin.x, vmax.y, vmin.z)).m128_f32[0] >= 0.0f)
+		{
+			continue;
+		}
+
+		if (XMPlaneDotCoord(m_planes[i], Vector3( vmax.x, vmax.y, vmin.z)).m128_f32[0] >= 0.0f)
+		{
+			continue;
+		}
+
+		if (XMPlaneDotCoord(m_planes[i], Vector3( vmin.x, vmin.y, vmax.z)).m128_f32[0] >= 0.0f)
+		{
+			continue; 
+		}
+
+		if (XMPlaneDotCoord(m_planes[i], Vector3( vmax.x, vmin.y, vmax.z)).m128_f32[0] >= 0.0f)
+		{
+			continue;
+		}
+
+		if (XMPlaneDotCoord(m_planes[i], Vector3( vmin.x, vmax.y, vmax.z)).m128_f32[0] >= 0.0f)
+		{
+			continue;
+		}
+
+		if (XMPlaneDotCoord(m_planes[i], Vector3( vmax.x, vmax.y, vmax.z)).m128_f32[0] >= 0.0f)
+		{
+			continue;
+		}
+
+		return false;
+	}
+
+	return true;
+}
+
 bool FrustumClass::CheckCube(float xCenter, float yCenter, float zCenter, float radius)
 {
 	int i;
