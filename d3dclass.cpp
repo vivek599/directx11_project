@@ -21,7 +21,7 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsyncEnabled, 
 	ComPtr<IDXGIFactory> factory;
 	ComPtr<IDXGIAdapter> adapter;
 	ComPtr<IDXGIOutput> adapterOutput;
-	unsigned int numModes, i, numerator, denominator;
+	unsigned int numModes, i, numerator = 0, denominator = 1;
 	size_t stringLength;
 	DXGI_MODE_DESC* displayModeList;
 	DXGI_ADAPTER_DESC adapterDesc;
@@ -38,7 +38,6 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsyncEnabled, 
 		D3D_FEATURE_LEVEL_9_1
 	};
 	const unsigned int numFeaturelevels = _countof(featureLevels);
-	ComPtr<ID3D11Texture2D> backBufferPtr;
 	D3D11_TEXTURE2D_DESC depthBufferDesc;
 	D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
 	D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
@@ -48,6 +47,9 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsyncEnabled, 
 
 	D3D11_DEPTH_STENCIL_DESC depthDisableStencilDesc;
 	m_vsyncEnabled = vsyncEnabled;
+	m_screenWidth = screenWidth;
+	m_screenHeight = screenHeight;
+	m_hwnd = hwnd;
 
 	//creat directx graphic interface factory
 	result = CreateDXGIFactory( IID_PPV_ARGS(factory.GetAddressOf()));
@@ -91,10 +93,8 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsyncEnabled, 
 		}
 	}
 
-
 	result = adapter->GetDesc(&adapterDesc);
 	assert(SUCCEEDED(result));
-
 
 	m_videoCardMemory = (int)adapterDesc.DedicatedVideoMemory / (1024*1024);
 	error = wcstombs_s(  &stringLength, m_videoCardDesc, 128, adapterDesc.Description, 128);
@@ -105,8 +105,6 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsyncEnabled, 
 
 	delete[] displayModeList;
 	displayModeList = 0;
-
- 
 
 	//init swap chain desc
 	ZeroMemory(&swapChainDesc, sizeof(swapChainDesc));
@@ -149,17 +147,17 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsyncEnabled, 
 	//featureLevel = D3D_FEATURE_LEVEL_11_0;
 
 	//create swap chain device and context
-	result = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, D3D11_CREATE_DEVICE_DEBUG, featureLevels, numFeaturelevels,
-		D3D11_SDK_VERSION, &swapChainDesc, m_swapChain.GetAddressOf(),  m_device.GetAddressOf(), &m_featureLevel, m_deviceContext.GetAddressOf() );
+	result = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, D3D11_CREATE_DEVICE_DEBUG | D3D11_CREATE_DEVICE_BGRA_SUPPORT, featureLevels, numFeaturelevels,
+		D3D11_SDK_VERSION, &swapChainDesc, m_swapChain.GetAddressOf(),  m_device.GetAddressOf(), &m_featureLevel, m_deviceContext.ReleaseAndGetAddressOf() );
 	assert(SUCCEEDED(result));
 
 
-	result = m_swapChain->GetBuffer(0, IID_PPV_ARGS( backBufferPtr.GetAddressOf()));
+	result = m_swapChain->GetBuffer(0, IID_PPV_ARGS( m_backBuffer.GetAddressOf()));
 	assert(SUCCEEDED(result));
 
 
 	//create render target view with back buffer pointer
-	result = m_device->CreateRenderTargetView(backBufferPtr.Get(), NULL, m_renderTargetView.GetAddressOf() );
+	result = m_device->CreateRenderTargetView(m_backBuffer.Get(), NULL, m_renderTargetView.GetAddressOf() );
 	assert(SUCCEEDED(result));
 
  
@@ -212,7 +210,7 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsyncEnabled, 
 	assert(SUCCEEDED(result));
 
 
-	m_deviceContext->OMSetDepthStencilState(m_depthStencilState.Get(), 1);
+	GetContext()->OMSetDepthStencilState(m_depthStencilState.Get(), 1);
 
 	// init depth stencil view
 	ZeroMemory(&depthStencilViewDesc, sizeof(depthStencilViewDesc));
@@ -226,7 +224,7 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsyncEnabled, 
 
 
 	// bind the render target view and depth stencil buffer  to the output render pipeline
-	m_deviceContext->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), m_depthStencilView.Get());
+	GetContext()->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), m_depthStencilView.Get());
 
 	rasterDesc.AntialiasedLineEnable = false;
 	rasterDesc.CullMode = D3D11_CULL_BACK;
@@ -243,7 +241,7 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsyncEnabled, 
 	assert(SUCCEEDED(result));
 
 
-	m_deviceContext->RSSetState(m_rasterState.Get());
+	GetContext()->RSSetState(m_rasterState.Get());
 
 	// Setup a raster description which turns off back face culling.
 	rasterDesc.AntialiasedLineEnable = false;
@@ -270,7 +268,7 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsyncEnabled, 
 	m_viewport.TopLeftX = 0.f;
 	m_viewport.TopLeftY = 0.f;
 
-	m_deviceContext->RSSetViewports(1, &m_viewport);
+	GetContext()->RSSetViewports(1, &m_viewport);
 
 	//projection matrix
 	fieldOfView = (float)XM_PI / 4.f;
@@ -351,10 +349,10 @@ void D3DClass::BeginScene(float red, float green, float blue, float alpha)
 	color[3] = alpha;
 
 	//clear back buffer
-	m_deviceContext->ClearRenderTargetView(m_renderTargetView.Get(), color);
+	GetContext()->ClearRenderTargetView(m_renderTargetView.Get(), color);
 	
 	//clear depth buffer
-	m_deviceContext->ClearDepthStencilView(m_depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.f, 0);
+	GetContext()->ClearDepthStencilView(m_depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.f, 0);
 
 	TurnOnAlphaBlending();
 
@@ -372,7 +370,7 @@ void D3DClass::EndScene()
 		// as fast as possible
 		m_swapChain->Present(0, 0);
 	}
-
+	GetContext()->Flush();
 }
 
 ComPtr<ID3D11Device> D3DClass::GetDevice()
@@ -382,7 +380,7 @@ ComPtr<ID3D11Device> D3DClass::GetDevice()
 
 ComPtr < ID3D11DeviceContext> D3DClass::GetDeviceContext()
 {
-	return m_deviceContext;
+	return GetContext();
 }
 
 void D3DClass::GetProjectionMatrix(Mat4& projectionMatrix)
@@ -448,7 +446,7 @@ void D3DClass::TurnOnAlphaBlending()
 	blendFactor[3] = 0.0f;
 
 	// Turn on the alpha blending.
-	m_deviceContext->OMSetBlendState(m_alphaEnableBlendingState.Get(), blendFactor, 0xffffffff);
+	GetContext()->OMSetBlendState(m_alphaEnableBlendingState.Get(), blendFactor, 0xffffffff);
 
 }
 
@@ -460,35 +458,53 @@ ComPtr < ID3D11DepthStencilView> D3DClass::GetDepthStencilView()
 void D3DClass::SetBackBufferRenderTarget()
 {
 	// Bind the render target view and depth stencil buffer to the output render pipeline.
-	m_deviceContext->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), m_depthStencilView.Get());
+	GetContext()->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), m_depthStencilView.Get());
+}
+
+ID3D11Texture2D* D3DClass::GetBackBuffer()
+{
+	return m_backBuffer.Get();
+}
+
+ComPtr<IDXGISurface> D3DClass::GetBackBufferSurface()
+{
+	HRESULT hr = m_swapChain->GetBuffer(0, IID_PPV_ARGS(m_backBufferSurface.ReleaseAndGetAddressOf()));
+	assert(SUCCEEDED(hr));
+
+	return m_backBufferSurface;
+}
+
+IDXGISwapChain* D3DClass::GetSwapChain()
+{
+	return m_swapChain.Get();
 }
 
 void D3DClass::TurnZBufferOn()
 {
-	m_deviceContext->OMSetDepthStencilState(m_depthStencilState.Get(), 1);
+	GetContext()->OMSetDepthStencilState(m_depthStencilState.Get(), 1);
 }
 
 void D3DClass::TurnZBufferOff()
 {
-	m_deviceContext->OMSetDepthStencilState(m_DepthDisableStencilState.Get(), 1);
+	GetContext()->OMSetDepthStencilState(m_DepthDisableStencilState.Get(), 1);
 }
 
 void D3DClass::TurnOnCulling()
 {
 	// Set the culling rasterizer state.
-	m_deviceContext->RSSetState(m_rasterState.Get());
+	GetContext()->RSSetState(m_rasterState.Get());
 }
 
 void D3DClass::TurnOffCulling()
 {
 	// Set the culling rasterizer state.
-	m_deviceContext->RSSetState(m_rasterStateNoCulling.Get());
+	GetContext()->RSSetState(m_rasterStateNoCulling.Get());
 }
 
 void D3DClass::ResetViewport()
 {
 	// Set the viewport.
-	m_deviceContext->RSSetViewports(1, &m_viewport);
+	GetContext()->RSSetViewports(1, &m_viewport);
 
 }
 

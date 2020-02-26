@@ -1,11 +1,4 @@
 
-#define NOWARNINGS 1
-
-#if NOWARNINGS
-
-#pragma warning(disable : 4005 4244 4267 4100 )
-
-#endif 
 
 #include "WindowClass.h"
 

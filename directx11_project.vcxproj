@@ -159,12 +159,11 @@
     <ClCompile Include="bitmapclass.cpp" />
     <ClCompile Include="BitmapShaderClass.cpp" />
     <ClCompile Include="cameraclass.cpp" />
+    <ClCompile Include="Canvas2D.cpp" />
     <ClCompile Include="CpuUsageClass.cpp" />
     <ClCompile Include="depthshaderclass.cpp" />
     <ClCompile Include="DirectXTK-master\Src\WICTextureLoader.cpp" />
-    <ClCompile Include="FontShaderClass.cpp" />
     <ClCompile Include="FrustumClass.cpp" />
-    <ClCompile Include="GlyphClass.cpp" />
     <ClCompile Include="LightClass.cpp" />
     <ClCompile Include="d3dclass.cpp" />
     <ClCompile Include="graphicsclass.cpp" />
@@ -186,11 +185,10 @@
     <ClInclude Include="bitmapclass.h" />
     <ClInclude Include="BitmapShaderClass.h" />
     <ClInclude Include="cameraclass.h" />
+    <ClInclude Include="Canvas2D.h" />
     <ClInclude Include="CpuUsageClass.h" />
     <ClInclude Include="depthshaderclass.h" />
-    <ClInclude Include="FontShaderClass.h" />
     <ClInclude Include="FrustumClass.h" />
-    <ClInclude Include="GlyphClass.h" />
     <ClInclude Include="LightClass.h" />
     <ClInclude Include="commoninclude.h" />
     <ClInclude Include="d3dclass.h" />

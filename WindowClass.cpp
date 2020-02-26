@@ -74,9 +74,9 @@ void WindowClass::Run()
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
-
+		
 		// If windows signals to end the application then exit out.
-		if(msg.message == WM_QUIT)
+		if (msg.message == WM_QUIT)
 		{
 			done = true;
 		}
@@ -87,12 +87,9 @@ void WindowClass::Run()
 			{
 				done = true;
 			}
-
 		}
 
-			
 	}
-	
 
 }
 
@@ -146,9 +143,6 @@ bool WindowClass::Frame()
 
 	result = m_Input->Frame(m_deltaTime);
 	assert(result);
-
-	int mouseX = int((xMousePos/1024.f)*360.f);//m_Input->GetMouseLoc().x;
-	int mouseY = int((yMousePos/768.f) * 360.f);//m_Input->GetMouseLoc().y;
 	
 	if (!m_pauseGameLoop)
 	{
@@ -178,8 +172,6 @@ bool WindowClass::Frame()
 	SetWindowTextA(	m_hwnd, /*( string("Cpu%: ") + to_string(m_cpuUsage->GetCpuPercentage()) + */
 			  (string(" DeltaTime: ") + to_string(m_deltaTime) 
 			+ string(" FPS: ") + to_string(avgFps)
-			+ string(" mX: ") + to_string(mouseX) 
-			+ string(" mY: ") + to_string(mouseY) 
 			+ string(" Input: ") + userInputString ).c_str());
 	
 	//m_mouseRaw = {};

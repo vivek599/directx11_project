@@ -50,17 +50,6 @@ bool GraphicClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	assert(result);
 
 
-	m_Glyph.reset(new GlyphClass());
-	assert(m_Glyph);
-
-
-	result = m_Glyph->Initialize(m_D3D->GetDevice().Get(), hwnd, screenWidth, screenHeight, (WCHAR*)L"../Font/AgencyFBFont_64x64.bmp" );
-	assert(result);
-
-
- 
-	
-
 	// Create the light object.
 	m_Light.reset( new LightClass());
 	assert(m_Light);
@@ -140,7 +129,9 @@ bool GraphicClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	result = m_skybox->Initialize(m_D3D->GetDevice().Get());
 	assert(result);
 
-
+	m_canvas2D.reset(new Canvas2D());
+	assert(m_canvas2D);
+	m_canvas2D->Initialize(m_D3D.get());
 
 	return true;
 	
@@ -180,6 +171,7 @@ bool GraphicClass::Frame(float deltaTime)
 	{
 		return false;
 	}
+
 
 	return true;
 }
@@ -221,16 +213,16 @@ bool GraphicClass::Render(float deltaTime)
 		return false;
 	}
 
-	//render glyph
-	result = m_Glyph->Render(m_D3D->GetDeviceContext().Get(), 10, 10, world, m_ViewMatrix2D, ortho);
+	//turn z buffer back on for 3d rendering
+	m_D3D->TurnZBufferOn();
+
+
+	result = m_canvas2D->RenderUI2D(deltaTime);
 	if (!result)
 	{
 		return false;
 	}
 
-
-	//turn z buffer back on for 3d rendering
-	m_D3D->TurnZBufferOn();
 
 	//present the rendered scene to screen
 	m_D3D->EndScene();

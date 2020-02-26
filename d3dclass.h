@@ -41,6 +41,14 @@ public:
 	ComPtr < ID3D11DepthStencilView> GetDepthStencilView();
 	void SetBackBufferRenderTarget();
 
+	ID3D11Texture2D* GetBackBuffer();
+	int GetScreenWidth() const { return m_screenWidth; }
+
+	int GetScreenHeight() const { return m_screenHeight; }
+	HWND GetHwnd() const { return m_hwnd; }
+
+	ComPtr<IDXGISurface> GetBackBufferSurface();
+	ComPtr<ID3D11DeviceContext> GetContext() const { return m_deviceContext; }
 protected:
 private:
 	bool m_vsyncEnabled;
@@ -56,6 +64,8 @@ private:
 	ComPtr<ID3D11DepthStencilView> m_depthStencilView;
 	ComPtr<ID3D11RasterizerState> m_rasterState;
 	ComPtr<ID3D11RasterizerState> m_rasterStateNoCulling;
+	ComPtr<ID3D11Texture2D> m_backBuffer;
+	ComPtr< IDXGISurface> m_backBufferSurface;
 
 	Mat4 m_projectionMatrix;
 	Mat4 m_worldMatrix;
@@ -66,4 +76,9 @@ private:
 	ComPtr < ID3D11BlendState> m_alphaEnableBlendingState;
 
 	D3D11_VIEWPORT m_viewport;
+	int m_screenWidth;
+	int m_screenHeight;
+	HWND m_hwnd;
+public:
+	IDXGISwapChain* GetSwapChain();
 };

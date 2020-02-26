@@ -65,6 +65,8 @@ void CameraClass::Fly(float deltaTime)
 	pitch += float(m_rawMouse.GetDeltaY()) * MOUSESPEED * deltaTime;
 	yaw += float(m_rawMouse.GetDeltaX()) * MOUSESPEED * deltaTime;
 
+	pitch = pitch > 80.0f ? 80.0f : (pitch < -80.0f ? -80.0f : pitch);
+
 	SetRotation(pitch, yaw, 0.f);
 
 	float distance = MOVEMENTSPEED * deltaTime;

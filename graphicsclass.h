@@ -1,8 +1,6 @@
 #pragma once
 
-#include <Windows.h>
-
-#include "d3dclass.h"
+#include "Canvas2D.h"
 #include "cameraclass.h"
 #include "modelclass.h"
 #include "SkyboxClass.h"
@@ -11,7 +9,6 @@
 #include "RenderTextureClass.h"
 #include "textureshaderclass.h" 
 
-#include "GlyphClass.h"
 #include "LightClass.h"
 #include "PointLightClass.h"
 
@@ -45,11 +42,11 @@ private:
 	unique_ptr<SkyboxClass> m_skybox;
 	unique_ptr<FrustumClass> m_frustum;
 	unique_ptr<BitmapClass> m_Bitmap;
-	unique_ptr<GlyphClass> m_Glyph;
 	unique_ptr<RenderTextureClass> m_renderTexture;
 		
 	unique_ptr < LightClass> m_Light;
-	 
+	unique_ptr < Canvas2D> m_canvas2D;
+	
 	Mat4 m_ViewMatrix2D;
 
 };
