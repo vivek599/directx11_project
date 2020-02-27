@@ -151,11 +151,22 @@ bool WindowClass::Frame()
 	}
 
 	m_deltaTime = t.End("")/1000.0f; // in seconds
+	m_deltaTime = m_deltaTime <= 0.0f ? 0.016 : m_deltaTime;
 
+	ShowFps();
+	
+	//m_mouseRaw = {};
+	m_rawMouse.Clear();
+
+	return true;
+}
+
+void WindowClass::ShowFps()
+{
 	//SetWindowTextA(m_hwnd, userInputString.c_str());
 	int fps = int(1.0f / m_deltaTime);
 	const int fpsSampls = 50;
-	static int avgFpsArray[fpsSampls] = {0};
+	static int avgFpsArray[fpsSampls] = { 0 };
 	static int avgFpsArrIndex = 0;
 
 	avgFpsArray[avgFpsArrIndex % fpsSampls] = fps;
@@ -169,15 +180,10 @@ bool WindowClass::Frame()
 
 	avgFps /= fpsSampls;
 
-	SetWindowTextA(	m_hwnd, /*( string("Cpu%: ") + to_string(m_cpuUsage->GetCpuPercentage()) + */
-			  (string(" DeltaTime: ") + to_string(m_deltaTime) 
+	SetWindowTextA(m_hwnd, /*( string("Cpu%: ") + to_string(m_cpuUsage->GetCpuPercentage()) + */
+		(string(" DeltaTime: ") + to_string(m_deltaTime)
 			+ string(" FPS: ") + to_string(avgFps)
-			+ string(" Input: ") + userInputString ).c_str());
-	
-	//m_mouseRaw = {};
-	m_rawMouse.Clear();
-
-	return true;
+			+ string(" Input: ") + userInputString).c_str());
 }
 
 void WindowClass::ProcessKeyboardAndMouseEvents()

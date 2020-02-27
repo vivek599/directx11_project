@@ -17,7 +17,6 @@ public:
 
 
 private:
-	ComPtr< IDXGISurface> m_d2dBackBuffer;
 
 	ComPtr<IDWriteFactory> m_dWriteFactory;
 	ComPtr<ID2D1Factory3> m_d2dFactory;

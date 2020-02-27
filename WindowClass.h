@@ -22,6 +22,8 @@ public:
 private:
 	bool Frame();
 
+	void ShowFps();
+
 	void ProcessKeyboardAndMouseEvents();
 
 	void InitializeWindows(int& screenWidth, int& screenHeight);

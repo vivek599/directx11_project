@@ -35,7 +35,7 @@ bool Canvas2D::Initialize( D3DClass* renderer)
 		);
 
 	// Create a Direct2D render target which can draw into the surface in the swap chain
-	hr = m_d2dFactory->CreateDxgiSurfaceRenderTarget(renderer->GetBackBufferSurface().Get(), &props, &m_renderTarget );
+	hr = m_d2dFactory->CreateDxgiSurfaceRenderTarget(renderer->GetBackBufferSurface().Get(), &props, m_renderTarget.ReleaseAndGetAddressOf());
 	assert(SUCCEEDED(hr));
 
 	hr = m_renderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Yellow), m_brush.ReleaseAndGetAddressOf());
