@@ -3,6 +3,7 @@
 #include "commoninclude.h"
 #include "BaseClass.h"
 
+#include "BoundingBoxClass.h"
 #include "ModelShaderClass.h"
 #include "depthshaderclass.h"
 #include "textureclass.h"
@@ -16,11 +17,17 @@ class ModelClass : BaseClass
 {
 
 private:
-	struct boundingBox
+	struct BBox
 	{
 		Vector3 min;
 		Vector3 max;
 	}m_box;
+
+
+	struct BBoxVertex
+	{
+		XMFLOAT3 position;
+	};
 
 public:
 	ModelClass(ID3D11Device* device, const char* modelFilename, const WCHAR* texpath, const WCHAR* normalpath);
@@ -40,7 +47,7 @@ public:
 	ComPtr<ID3D11ShaderResourceView> GetTexture();
 	ID3D11ShaderResourceView** GetTextureArray();
 	static int m_polygonCount;
-	boundingBox GetBBox() { return m_box; }
+	BBox GetBBox();
 protected:
 private:
 
@@ -69,6 +76,7 @@ private:
 	int m_VertexCount; 
 	int m_IndexCount;
 
+	unique_ptr<BoundingBoxClass> m_BBox;
 	unique_ptr<ModelShaderClass> m_ModelShader;
 	unique_ptr<DepthShaderClass> m_depthShader;
 	unique_ptr<TextureClass> m_Texture[2];
@@ -88,6 +96,7 @@ private:
 	float m_rotationAngle;
 	float m_rotationRadius;
 	Vector3 m_rotationAxis;
+	vector <BBoxVertex> bbox_vertices;
 };
 
 

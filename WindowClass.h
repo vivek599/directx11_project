@@ -1,6 +1,7 @@
 #pragma once
 
 #include "RawMouse.h"
+#include "RawKeyboard.h"
 
 #include "inputclass.h"
 #include "graphicsclass.h"

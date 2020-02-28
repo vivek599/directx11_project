@@ -15,6 +15,39 @@ int BaseClass::yMousePos;
 bool BaseClass::m_pauseGameLoop;
 RawMouse BaseClass::m_rawMouse;
 
+bool BaseClass::KeyUp(int key)
+{
+	if (key == VK_SPACE)
+	{
+		return m_rawKeyboard.IsSpaceKeyUp();
+	}
+
+	return false;
+}
+
+bool BaseClass::KeyDown(int key)
+{
+	int uKey = key & ~32;
+	if ( uKey >= 'A' && uKey <= 'Z' )
+	{
+		return m_rawKeyboard.IsAlphabeticKeyDown(uKey);
+	}
+
+	if (key == VK_ESCAPE)
+	{
+		return m_rawKeyboard.IsEscapeKeyDown();
+	}
+
+	if (key == VK_SPACE)
+	{
+		return m_rawKeyboard.IsSpaceKeyDown();
+	}
+
+	return false;
+}
+
+RawKeyboard BaseClass::m_rawKeyboard;
+
 BaseClass::BaseClass()
 {
 	userInputString = "";
@@ -29,6 +62,7 @@ BaseClass::BaseClass()
 	yMousePos = 0;
 	m_pauseGameLoop = false;
 	m_rawMouse = {};
+	m_rawKeyboard = {};
 
 }
 

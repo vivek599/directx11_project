@@ -2,6 +2,16 @@
 
 int ModelClass::m_polygonCount = 0;
 
+ModelClass::BBox ModelClass::GetBBox()
+{
+	BBox box = m_box;
+
+	box.min += m_Position;
+	box.max += m_Position;
+	
+	return box;
+}
+
 ModelClass::ModelClass(ID3D11Device* device, const char* modelFilename, const WCHAR* texpath, const WCHAR* normalpath)
 {
 	m_box = {};
@@ -58,6 +68,7 @@ bool ModelClass::Initialize(ID3D11Device* device, const char* modelFilename, con
 	result = InitializeBuffers(device);
 	assert(result);
 
+	m_BBox.reset(new BoundingBoxClass( device, bbox_vertices.data(), bbox_vertices.size()));
 
 	result = LoadTexture(device, textureFilename, normalFilename);
 	assert(result);
@@ -99,6 +110,9 @@ bool ModelClass::Render(ID3D11DeviceContext* context, RenderTextureClass* render
 	{
 		// Render the model using the model light shader.
 		result = m_ModelShader->Render( context, GetIndexCount(), m_finalMatrix, view, proj, light, lightViewMatrix, lightProjectionMatrix, GetTextureArray(), renderTexture->GetShaderResourceView().Get(), camera->GetPosition() );
+		assert(result);
+
+		result = m_BBox->Render(context, XMMatrixScaling(m_Scale3d.x, m_Scale3d.y, m_Scale3d.z) * XMMatrixTranslation(m_Position.x, m_Position.y, m_Position.z), view, proj);
 		assert(result);
 
 	}
@@ -150,7 +164,8 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 {
 	D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
 	D3D11_SUBRESOURCE_DATA vertexData, indexData;
-	HRESULT result;
+	HRESULT hr = S_OK;
+ 
 
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	vertexBufferDesc.ByteWidth = sizeof(VertexType) * m_VertexCount;
@@ -163,11 +178,9 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 	vertexData.SysMemPitch = 0;
 	vertexData.SysMemSlicePitch = 0;
 
-	result = device->CreateBuffer(&vertexBufferDesc, &vertexData, m_VertexBuffer.GetAddressOf());
-	if (FAILED(result))
-	{
-		return false;
-	}
+	hr = device->CreateBuffer(&vertexBufferDesc, &vertexData, m_VertexBuffer.GetAddressOf());
+	assert(SUCCEEDED(hr));
+
 
 	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	indexBufferDesc.ByteWidth = sizeof(UINT) * m_IndexCount;
@@ -180,11 +193,10 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 	indexData.SysMemPitch = 0;
 	indexData.SysMemSlicePitch = 0;
 
-	result = device->CreateBuffer(&indexBufferDesc, &indexData, m_IndexBuffer.GetAddressOf());
-	if (FAILED(result))
-	{
-		return false;
-	}
+	hr = device->CreateBuffer(&indexBufferDesc, &indexData, m_IndexBuffer.GetAddressOf());
+	assert(SUCCEEDED(hr));
+
+
 
 	return true;
 }
@@ -199,14 +211,11 @@ void ModelClass::ShutdownBuffers()
 
 void ModelClass::RenderBuffers(ID3D11DeviceContext* context)
 {
-	unsigned int stride, offset;
-
-	stride = sizeof(VertexType);
-	offset = 0;
+	unsigned int stride = sizeof(VertexType);
+	unsigned int offset = 0;
 
 	context->IASetVertexBuffers(0, 1, m_VertexBuffer.GetAddressOf(), &stride, &offset);
 	context->IASetIndexBuffer(m_IndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 }
@@ -256,7 +265,7 @@ bool ModelClass::LoadModel(const char* modelFilename)
 {
 	Assimp::Importer importer;
 
-	const aiScene* pScene = importer.ReadFile(modelFilename, aiProcess_Triangulate | aiProcess_ConvertToLeftHanded );
+	const aiScene* pScene = importer.ReadFile(modelFilename, aiProcess_Triangulate | aiProcess_ConvertToLeftHanded);
 	if (!pScene)
 	{
 		return false;
@@ -310,9 +319,9 @@ bool ModelClass::LoadModel(const char* modelFilename)
 	for (UINT i = 0; i < mesh->mNumFaces; i++)
 	{
 		aiFace face = mesh->mFaces[i];
-		if (face.mNumIndices != 3 )
+		if (face.mNumIndices != 3)
 		{
-			MessageBox( NULL,L"FACES 3 indices", L"Indices", MB_OK );
+			MessageBox(NULL, L"FACES 3 indices", L"Indices", MB_OK);
 			return false;
 		}
 
@@ -322,6 +331,168 @@ bool ModelClass::LoadModel(const char* modelFilename)
 
 	m_IndexCount = indices.size();
 	m_polygonCount += mesh->mNumFaces;
+
+	bbox_vertices =
+	{
+		//{XMFLOAT3(m_box.min.x,m_box.min.y,m_box.min.z)},
+		//{XMFLOAT3(m_box.min.x,m_box.max.y,m_box.min.z)},
+
+		//{XMFLOAT3(m_box.min.x,m_box.max.y,m_box.min.z)},
+		//{XMFLOAT3(m_box.min.x,m_box.max.y,m_box.max.z)},
+
+		//{XMFLOAT3(m_box.min.x,m_box.max.y,m_box.max.z)},
+		//{XMFLOAT3(m_box.min.x,m_box.min.y,m_box.max.z)},
+
+		//{XMFLOAT3(m_box.min.x,m_box.min.y,m_box.max.z)},
+		//{XMFLOAT3(m_box.min.x,m_box.min.y,m_box.min.z)},
+
+
+		//{XMFLOAT3(m_box.max.x,m_box.max.y,m_box.max.z)},
+		//{XMFLOAT3(m_box.max.x,m_box.min.y,m_box.max.z)},
+
+		//{XMFLOAT3(m_box.max.x,m_box.min.y,m_box.max.z)},
+		//{XMFLOAT3(m_box.max.x,m_box.min.y,m_box.min.z)},
+
+		//{XMFLOAT3(m_box.max.x,m_box.min.y,m_box.min.z)},
+		//{XMFLOAT3(m_box.max.x,m_box.max.y,m_box.min.z)},
+
+		//{XMFLOAT3(m_box.max.x,m_box.max.y,m_box.min.z)},
+		//{XMFLOAT3(m_box.max.x,m_box.max.y,m_box.max.z)}
+#if 1
+		{ XMFLOAT3(m_box.max.x, m_box.max.y, m_box.min.z)},
+		{ XMFLOAT3(m_box.min.x, m_box.max.y, m_box.min.z)},
+		{ XMFLOAT3(m_box.min.x, m_box.max.y, m_box.min.z)},
+		{ XMFLOAT3(m_box.min.x, m_box.max.y, m_box.max.z)},
+		{ XMFLOAT3(m_box.min.x, m_box.max.y, m_box.max.z)},
+		{ XMFLOAT3(m_box.max.x, m_box.max.y, m_box.max.z)},
+		{ XMFLOAT3(m_box.max.x, m_box.max.y, m_box.max.z)},
+		{ XMFLOAT3(m_box.max.x, m_box.max.y, m_box.min.z)},
+		{ XMFLOAT3(m_box.max.x, m_box.min.y, m_box.max.z)},
+		{ XMFLOAT3(m_box.min.x, m_box.min.y, m_box.max.z)},
+		{ XMFLOAT3(m_box.min.x, m_box.min.y, m_box.max.z)},
+		{ XMFLOAT3(m_box.min.x, m_box.min.y, m_box.min.z)},
+		{ XMFLOAT3(m_box.min.x, m_box.min.y, m_box.min.z)},
+		{ XMFLOAT3(m_box.max.x, m_box.min.y, m_box.min.z)},
+		{ XMFLOAT3(m_box.max.x, m_box.min.y, m_box.min.z)},
+		{ XMFLOAT3(m_box.max.x, m_box.min.y, m_box.max.z)},
+		{ XMFLOAT3(m_box.max.x, m_box.max.y, m_box.max.z)},
+		{ XMFLOAT3(m_box.min.x, m_box.max.y, m_box.max.z)},
+		{ XMFLOAT3(m_box.min.x, m_box.max.y, m_box.max.z)},
+		{ XMFLOAT3(m_box.min.x, m_box.min.y, m_box.max.z)},
+		{ XMFLOAT3(m_box.min.x, m_box.min.y, m_box.max.z)},
+		{ XMFLOAT3(m_box.max.x, m_box.min.y, m_box.max.z)},
+		{ XMFLOAT3(m_box.max.x, m_box.min.y, m_box.max.z)},
+		{ XMFLOAT3(m_box.max.x, m_box.max.y, m_box.max.z)},
+		{ XMFLOAT3(m_box.max.x, m_box.min.y, m_box.min.z)},
+		{ XMFLOAT3(m_box.min.x, m_box.min.y, m_box.min.z)},
+		{ XMFLOAT3(m_box.min.x, m_box.min.y, m_box.min.z)},
+		{ XMFLOAT3(m_box.min.x, m_box.max.y, m_box.min.z)},
+		{ XMFLOAT3(m_box.min.x, m_box.max.y, m_box.min.z)},
+		{ XMFLOAT3(m_box.max.x, m_box.max.y, m_box.min.z)},
+		{ XMFLOAT3(m_box.max.x, m_box.max.y, m_box.min.z)},
+		{ XMFLOAT3(m_box.max.x, m_box.min.y, m_box.min.z)},
+		{ XMFLOAT3(m_box.min.x, m_box.max.y, m_box.max.z)},
+		{ XMFLOAT3(m_box.min.x, m_box.max.y, m_box.min.z)},
+		{ XMFLOAT3(m_box.min.x, m_box.max.y, m_box.min.z)},
+		{ XMFLOAT3(m_box.min.x, m_box.min.y, m_box.min.z)},
+		{ XMFLOAT3(m_box.min.x, m_box.min.y, m_box.min.z)},
+		{ XMFLOAT3(m_box.min.x, m_box.min.y, m_box.max.z)},
+		{ XMFLOAT3(m_box.min.x, m_box.min.y, m_box.max.z)},
+		{ XMFLOAT3(m_box.min.x, m_box.max.y, m_box.max.z)},
+		{ XMFLOAT3(m_box.max.x, m_box.max.y, m_box.min.z)},
+		{ XMFLOAT3(m_box.max.x, m_box.max.y, m_box.max.z)},
+		{ XMFLOAT3(m_box.max.x, m_box.max.y, m_box.max.z)},
+		{ XMFLOAT3(m_box.max.x, m_box.min.y, m_box.max.z)},
+		{ XMFLOAT3(m_box.max.x, m_box.min.y, m_box.max.z)},
+		{ XMFLOAT3(m_box.max.x, m_box.min.y, m_box.min.z)},
+		{ XMFLOAT3(m_box.max.x, m_box.min.y, m_box.min.z)},
+		{ XMFLOAT3(m_box.max.x, m_box.max.y, m_box.min.z)}
+#endif
+	};
+	//{
+		//{ XMFLOAT3(1.0f, 1.0f, -1.0f)},
+		//{ XMFLOAT3(-1.0f, 1.0f, -1.0f)},
+
+		//{ XMFLOAT3(-1.0f, 1.0f, -1.0f)},
+		//{ XMFLOAT3(-1.0f, 1.0f, 1.0f)},
+
+		//{ XMFLOAT3(-1.0f, 1.0f, 1.0f)},
+		//{ XMFLOAT3(1.0f, 1.0f, 1.0f)},
+
+		//{ XMFLOAT3(1.0f, 1.0f, 1.0f)},
+		//{ XMFLOAT3(1.0f, 1.0f, -1.0f)},
+
+		//// Bottom face { XMFLOAT3(y = -1.0f)
+
+		//{ XMFLOAT3(1.0f, -1.0f, 1.0f)},
+		//{ XMFLOAT3(-1.0f, -1.0f, 1.0f)},
+
+		//{ XMFLOAT3(-1.0f, -1.0f, 1.0f)},
+		//{ XMFLOAT3(-1.0f, -1.0f, -1.0f)},
+
+		//{ XMFLOAT3(-1.0f, -1.0f, -1.0f)},
+		//{ XMFLOAT3(1.0f, -1.0f, -1.0f)},
+
+		//{ XMFLOAT3(1.0f, -1.0f, -1.0f)},
+		//{ XMFLOAT3(1.0f, -1.0f, 1.0f)},
+
+		//// Front face  { XMFLOAT3(z = 1.0f)
+
+		//{ XMFLOAT3(1.0f, 1.0f, 1.0f)},
+		//{ XMFLOAT3(-1.0f, 1.0f, 1.0f)},
+
+		//{ XMFLOAT3(-1.0f, 1.0f, 1.0f)},
+		//{ XMFLOAT3(-1.0f, -1.0f, 1.0f)},
+
+		//{ XMFLOAT3(-1.0f, -1.0f, 1.0f)},
+		//{ XMFLOAT3(1.0f, -1.0f, 1.0f)},
+
+		//{ XMFLOAT3(1.0f, -1.0f, 1.0f)},
+		//{ XMFLOAT3(1.0f, 1.0f, 1.0f)},
+
+		//// Back face { XMFLOAT3(z = -1.0f)
+
+		//{ XMFLOAT3(1.0f, -1.0f, -1.0f)},
+		//{ XMFLOAT3(-1.0f, -1.0f, -1.0f)},
+
+		//{ XMFLOAT3(-1.0f, -1.0f, -1.0f)},
+		//{ XMFLOAT3(-1.0f, 1.0f, -1.0f)},
+
+		//{ XMFLOAT3(-1.0f, 1.0f, -1.0f)},
+		//{ XMFLOAT3(1.0f, 1.0f, -1.0f)},
+
+		//{ XMFLOAT3(1.0f, 1.0f, -1.0f)},
+		//{ XMFLOAT3(1.0f, -1.0f, -1.0f)},
+
+		//// Left face { XMFLOAT3(x = -1.0f)
+
+		//{ XMFLOAT3(-1.0f, 1.0f, 1.0f)},
+		//{ XMFLOAT3(-1.0f, 1.0f, -1.0f)},
+
+		//{ XMFLOAT3(-1.0f, 1.0f, -1.0f)},
+		//{ XMFLOAT3(-1.0f, -1.0f, -1.0f)},
+
+		//{ XMFLOAT3(-1.0f, -1.0f, -1.0f)},
+		//{ XMFLOAT3(-1.0f, -1.0f, 1.0f)},
+
+		//{ XMFLOAT3(-1.0f, -1.0f, 1.0f)},
+		//{ XMFLOAT3(-1.0f, 1.0f, 1.0f)},
+
+		//// Right face { XMFLOAT3(x = 1.0f)
+
+		//{ XMFLOAT3(1.0f, 1.0f, -1.0f)},
+		//{ XMFLOAT3(1.0f, 1.0f, 1.0f)},
+
+		//{ XMFLOAT3(1.0f, 1.0f, 1.0f)},
+		//{ XMFLOAT3(1.0f, -1.0f, 1.0f)},
+
+		//{ XMFLOAT3(1.0f, -1.0f, 1.0f)},
+		//{ XMFLOAT3(1.0f, -1.0f, -1.0f)},
+
+		//{ XMFLOAT3(1.0f, -1.0f, -1.0f)},
+		//{ XMFLOAT3(1.0f, 1.0f, -1.0f)}
+	//};
+
 	return true;
 }
 

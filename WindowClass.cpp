@@ -47,6 +47,7 @@ bool WindowClass::Initialize()
 	assert(result);
 
 	m_rawMouse.Initialize(m_hwnd);
+	m_rawKeyboard.Initialize(m_hwnd);
 
 	return true;
 
@@ -83,7 +84,7 @@ void WindowClass::Run()
 		else
 		{
 			result = Frame();
-			if (!result || m_Input->IsEscPressed())
+			if (!result || BaseClass::KeyDown(VK_ESCAPE))
 			{
 				done = true;
 			}
@@ -106,25 +107,26 @@ LRESULT CALLBACK WindowClass::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam
 		{
 			m_rawMouse.update(lparam);
 			userInputString = m_rawMouse.m_mouseDataString;
+			m_rawKeyboard.update(lparam);
 			return 0;
 		}
 
-		case WM_CHAR:
-		{
-			//if ((HIWORD(lparam) & KF_REPEAT) == 0)
-			{
-				m_Input->KeyDown((unsigned int)wparam);
-			}
-			//MessageBox( hwnd, L"WM_CHAR", L"down", MB_OK);
-			return 0;
-		}
+		//case WM_CHAR:
+		//{
+		//	//if ((HIWORD(lparam) & KF_REPEAT) == 0)
+		//	{
+		//		m_Input->KeyDown((unsigned int)wparam);
+		//	}
+		//	//MessageBox( hwnd, L"WM_CHAR", L"down", MB_OK);
+		//	return 0;
+		//}
 
-		case WM_KEYUP:
-		{
-			m_Input->KeyUp((unsigned int)wparam);
-			//MessageBox(hwnd, LPCWSTR(to_wstring((unsigned int)wparam).c_str()), L"up", MB_OK);
-			return 0;
-		}
+		//case WM_KEYUP:
+		//{
+		//	m_Input->KeyUp((unsigned int)wparam);
+		//	//MessageBox(hwnd, LPCWSTR(to_wstring((unsigned int)wparam).c_str()), L"up", MB_OK);
+		//	return 0;
+		//}
 
 		default:
 		{
@@ -143,7 +145,8 @@ bool WindowClass::Frame()
 
 	result = m_Input->Frame(m_deltaTime);
 	assert(result);
-	
+
+
 	if (!m_pauseGameLoop)
 	{
 		result = m_Graphics->Frame(m_deltaTime);
@@ -156,7 +159,8 @@ bool WindowClass::Frame()
 	ShowFps();
 	
 	//m_mouseRaw = {};
-	m_rawMouse.Clear();
+	m_rawKeyboard.updateKeyData();
+	m_rawMouse.Clear(); 
 
 	return true;
 }

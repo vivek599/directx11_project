@@ -83,37 +83,37 @@ void CameraClass::Fly(float deltaTime)
 	Vector3 right = m_up.Cross(forward);
 	right.Normalize();
 
-	if (BaseClass::m_moveCameraForward)
+	if (BaseClass::KeyDown('W'))
 	{
 		m_Position += distance * forward;
 		m_lookAt += distance * forward;
 	}
 
-	if (BaseClass::m_moveCameraBackward)
+	if (BaseClass::KeyDown('S'))
 	{
 		m_Position -= distance * forward;
 		m_lookAt -= distance * forward;
 	}
 
-	if (BaseClass::m_moveCameraLeft)
+	if (BaseClass::KeyDown('A'))
 	{
 		m_Position -= distance * right;
 		m_lookAt -= distance * right;
 	}
 
-	if (BaseClass::m_moveCameraRight)
+	if (BaseClass::KeyDown('D'))
 	{
 		m_Position += distance * right;
 		m_lookAt += distance * right;
 	}
 
-	if (BaseClass::m_moveCameraUp)
+	if (BaseClass::KeyDown('Q'))
 	{
 		m_Position.y += distance;
 		m_lookAt.y += distance;
 	}
 
-	if (BaseClass::m_moveCameraDown)
+	if (BaseClass::KeyDown('E'))
 	{
 		m_Position.y -= distance;
 		m_lookAt.y -= distance;
