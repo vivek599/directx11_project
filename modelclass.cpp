@@ -112,7 +112,7 @@ bool ModelClass::Render(ID3D11DeviceContext* context, RenderTextureClass* render
 		result = m_ModelShader->Render( context, GetIndexCount(), m_finalMatrix, view, proj, light, lightViewMatrix, lightProjectionMatrix, GetTextureArray(), renderTexture->GetShaderResourceView().Get(), camera->GetPosition() );
 		assert(result);
 
-		result = m_BBox->Render(context, XMMatrixScaling(m_Scale3d.x, m_Scale3d.y, m_Scale3d.z) * XMMatrixTranslation(m_Position.x, m_Position.y, m_Position.z), view, proj);
+		result = m_BBox->Render(context, m_finalMatrix, view, proj);
 		assert(result);
 
 	}

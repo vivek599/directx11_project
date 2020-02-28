@@ -123,7 +123,7 @@ void BoundingBoxClass::RenderBuffers(ID3D11DeviceContext* context)
 					    
 	context->IASetVertexBuffers(0, 1, m_BBoxVertexBuffer.GetAddressOf(), &stride, &offset);
 	context->IASetIndexBuffer(m_BBoxIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
 
 }
 
