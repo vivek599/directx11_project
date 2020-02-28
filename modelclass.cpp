@@ -334,31 +334,15 @@ bool ModelClass::LoadModel(const char* modelFilename)
 
 	bbox_vertices =
 	{
-		//{XMFLOAT3(m_box.min.x,m_box.min.y,m_box.min.z)},
-		//{XMFLOAT3(m_box.min.x,m_box.max.y,m_box.min.z)},
-
-		//{XMFLOAT3(m_box.min.x,m_box.max.y,m_box.min.z)},
-		//{XMFLOAT3(m_box.min.x,m_box.max.y,m_box.max.z)},
-
-		//{XMFLOAT3(m_box.min.x,m_box.max.y,m_box.max.z)},
-		//{XMFLOAT3(m_box.min.x,m_box.min.y,m_box.max.z)},
-
-		//{XMFLOAT3(m_box.min.x,m_box.min.y,m_box.max.z)},
-		//{XMFLOAT3(m_box.min.x,m_box.min.y,m_box.min.z)},
-
-
-		//{XMFLOAT3(m_box.max.x,m_box.max.y,m_box.max.z)},
-		//{XMFLOAT3(m_box.max.x,m_box.min.y,m_box.max.z)},
-
-		//{XMFLOAT3(m_box.max.x,m_box.min.y,m_box.max.z)},
-		//{XMFLOAT3(m_box.max.x,m_box.min.y,m_box.min.z)},
-
-		//{XMFLOAT3(m_box.max.x,m_box.min.y,m_box.min.z)},
-		//{XMFLOAT3(m_box.max.x,m_box.max.y,m_box.min.z)},
-
-		//{XMFLOAT3(m_box.max.x,m_box.max.y,m_box.min.z)},
-		//{XMFLOAT3(m_box.max.x,m_box.max.y,m_box.max.z)}
-#if 1
+		{ XMFLOAT3(m_box.min.x, m_box.min.y, m_box.min.z) },
+		{ XMFLOAT3(m_box.min.x, m_box.max.y, m_box.min.z) },
+		{ XMFLOAT3(m_box.max.x, m_box.max.y, m_box.min.z) },
+		{ XMFLOAT3(m_box.max.x, m_box.min.y, m_box.min.z) },
+		{ XMFLOAT3(m_box.min.x, m_box.min.y, m_box.max.z) },
+		{ XMFLOAT3(m_box.max.x, m_box.min.y, m_box.max.z) },
+		{ XMFLOAT3(m_box.max.x, m_box.max.y, m_box.max.z) },
+		{ XMFLOAT3(m_box.min.x, m_box.max.y, m_box.max.z) }
+#if 0
 		{ XMFLOAT3(m_box.max.x, m_box.max.y, m_box.min.z)},
 		{ XMFLOAT3(m_box.min.x, m_box.max.y, m_box.min.z)},
 		{ XMFLOAT3(m_box.min.x, m_box.max.y, m_box.min.z)},

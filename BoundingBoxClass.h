@@ -32,8 +32,10 @@ private:
 
 
 	ComPtr<ID3D11Buffer> m_BBoxVertexBuffer;
-	int m_BBoxVertexCount;
+	ComPtr<ID3D11Buffer> m_BBoxIndexBuffer;
+	int m_IndexCount;
 	vector <BBoxVertex> bbox_vertices;
+	vector <UINT> indices;
 
 	unique_ptr<BoundingBoxShader> m_BBoxShader;
 
