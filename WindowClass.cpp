@@ -70,12 +70,12 @@ void WindowClass::Run()
 
 	while (!done)
 	{
-		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE ))
+		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE ))
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
-		
+
 		// If windows signals to end the application then exit out.
 		if (msg.message == WM_QUIT)
 		{
