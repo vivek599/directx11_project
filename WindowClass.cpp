@@ -64,11 +64,11 @@ void WindowClass::Run()
 {
 	MSG msg;
 	bool result;
-	done = false;
+	m_bExitApp = false;
 	ZeroMemory(&msg, sizeof(MSG));
-	done = false;
+	m_bExitApp = false;
 
-	while (!done)
+	while (!m_bExitApp)
 	{
 		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE ))
 		{
@@ -77,16 +77,16 @@ void WindowClass::Run()
 		}
 
 		// If windows signals to end the application then exit out.
-		if (msg.message == WM_QUIT)
-		{
-			done = true;
-		}
-		else
-		{
-			result = Frame();
-			if (!result || BaseClass::KeyDown(VK_ESCAPE))
-			{
-				done = true;
+		if (msg.message == WM_QUIT) 
+		{ 
+			m_bExitApp = true; 
+		} 
+		else 
+		{ 
+			result = Frame(); 
+			if (!result || BaseClass::KeyDown(VK_ESCAPE)) 
+			{ 
+				m_bExitApp = true; 
 			}
 		}
 
@@ -96,17 +96,15 @@ void WindowClass::Run()
 
 LRESULT CALLBACK WindowClass::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam)
 {
-	if (umsg != WM_INPUT)
-	{
-		//m_rawMouse.Clear();
-	}
-
 	switch (umsg)
 	{
+		case WM_CLOSE:
+			PostQuitMessage(0);
+			return 0;
+
 		case WM_INPUT:
 		{
 			m_rawMouse.update(lparam);
-			userInputString = m_rawMouse.m_mouseDataString;
 			m_rawKeyboard.update(lparam);
 			return 0;
 		}
@@ -184,10 +182,7 @@ void WindowClass::ShowFps()
 
 	avgFps /= fpsSampls;
 
-	SetWindowTextA(m_hwnd, /*( string("Cpu%: ") + to_string(m_cpuUsage->GetCpuPercentage()) + */
-		(string(" DeltaTime: ") + to_string(m_deltaTime)
-			+ string(" FPS: ") + to_string(avgFps)
-			+ string(" Input: ") + userInputString).c_str());
+	userInputString = string("Cpu%: ") + to_string(m_cpuUsage->GetCpuPercentage()) + string("\nDeltaTime: ") + to_string(m_deltaTime) + string("\nFPS: ") + to_string(avgFps);
 }
 
 void WindowClass::ProcessKeyboardAndMouseEvents()

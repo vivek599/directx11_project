@@ -9,7 +9,7 @@ bool BaseClass::m_moveCameraRight;
 bool BaseClass::m_moveCameraUp;
 bool BaseClass::m_moveCameraDown;
 
-bool BaseClass::done;
+bool BaseClass::m_bExitApp;
 int BaseClass::xMousePos;
 int BaseClass::yMousePos;
 bool BaseClass::m_pauseGameLoop;
@@ -46,12 +46,17 @@ bool BaseClass::KeyDown(int key)
 	return false;
 }
 
+bool BaseClass::ALTF4Down()
+{
+	return m_rawKeyboard.IsAltF4();
+}
+
 RawKeyboard BaseClass::m_rawKeyboard;
 
 BaseClass::BaseClass()
 {
 	userInputString = "";
-	done = false;
+	m_bExitApp = false;
 	m_moveCameraForward = false;
 	m_moveCameraBackward = false;
 	m_moveCameraLeft = false;

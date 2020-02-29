@@ -35,7 +35,10 @@ bool InputClass::Frame(float deltaTime)
 		m_pauseGameLoop = !m_pauseGameLoop;
 	}
 
-
+	if (BaseClass::ALTF4Down())
+	{
+		m_bExitApp = true;
+	}
 
 	return true;
 }

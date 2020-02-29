@@ -18,7 +18,7 @@ public:
 	static bool m_moveCameraRight;
 	static bool m_moveCameraUp;
 	static bool m_moveCameraDown;
-	static bool done;
+	static bool m_bExitApp;
 	static int xMousePos;
 	static int yMousePos;
 	static bool m_pauseGameLoop;
@@ -26,6 +26,7 @@ public:
 
 	static bool KeyUp(int key);
 	static bool KeyDown(int key);
+	static bool ALTF4Down();
 	static RawKeyboard m_rawKeyboard;
 };
 

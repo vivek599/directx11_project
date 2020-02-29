@@ -43,7 +43,7 @@ long CpuUsageClass::GetCurrentTime()
 	LARGE_INTEGER li, freq;
 	QueryPerformanceCounter(&li);
 	QueryPerformanceFrequency(&freq);
-	return li.QuadPart / freq.QuadPart;
+	return 1000.0f * li.QuadPart / freq.QuadPart;
 }
 
 void CpuUsageClass::Shutdown()
@@ -61,16 +61,16 @@ void CpuUsageClass::Frame()
 
 	if (m_bCanReadCpu)
 	{
-		//if ((m_lastSampleTime + 1000) < GetCurrentTime())
-		//{
-		//	m_lastSampleTime = GetCurrentTime();
+		if ((m_lastSampleTime + 1000) < GetCurrentTime())
+		{
+			m_lastSampleTime = GetCurrentTime();
 
 			PdhCollectQueryData(m_queryHandle);
 
 			PdhGetFormattedCounterValue(m_counterHandle, PDH_FMT_LONG, NULL, &value);
 
 			m_cpuUsage = value.longValue;
-		//}
+		}
 	}
 }
 

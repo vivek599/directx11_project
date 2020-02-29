@@ -27,6 +27,7 @@ public:
 	void updateKeyData();
 
 	bool IsSpaceKeyDown();
+	bool IsAltF4();
 
 	bool IsSpaceKeyUp();
 private:
@@ -38,5 +39,8 @@ private:
 	bool m_bSpaceDown = false;
 	vector<byte> rawData;
 	bool m_bSpaceUp = false;
+	bool m_bAltF4 = false;
+	USHORT m_lastkeyCode = VK_NONAME;
+
 };
 

@@ -36,6 +36,11 @@ bool RawKeyboard::IsSpaceKeyDown()
 	return m_bSpaceDown;
 }
 
+bool RawKeyboard::IsAltF4()
+{
+	return m_bAltF4;
+}
+
 bool RawKeyboard::IsSpaceKeyUp()
 {
 	return m_bSpaceUp;
@@ -81,6 +86,7 @@ void RawKeyboard::update(LPARAM lparam)
 			if (keyCode == i + 0x41)
 			{
 				m_bAlphabet[0][i] = !keyUp;
+				m_lastkeyCode = keyCode;
 				break;
 			}
 		}
@@ -90,14 +96,18 @@ void RawKeyboard::update(LPARAM lparam)
 			if (keyCode == i + VK_LEFT)
 			{
 				m_bArrows[0][i] = !keyUp;
+				m_lastkeyCode = keyCode;
 				break;
 			}
 		}
+
+		m_bAltF4 = (m_lastkeyCode == VK_MENU) && keyCode == VK_F4 && !keyUp;
 
 		switch (keyCode)
 		{
 			case VK_ESCAPE:
 				m_bEscDown = !keyUp;
+				m_lastkeyCode = keyCode;
 				break;
 
 			case VK_LSHIFT:
@@ -105,12 +115,14 @@ void RawKeyboard::update(LPARAM lparam)
 			case VK_LCONTROL:
 			case VK_RCONTROL:
 			case VK_CAPITAL:
+				m_lastkeyCode = keyCode;
 				break;
 
 			case VK_LEFT:
 			case VK_UP:
 			case VK_RIGHT:
 			case VK_DOWN:
+				m_lastkeyCode = keyCode;
 				break;
 
 			case VK_TAB:
@@ -121,9 +133,11 @@ void RawKeyboard::update(LPARAM lparam)
 				//m_pauseGameLoop = !m_pauseGameLoop;
 				m_bSpaceDown = !keyUp;
 				m_bSpaceUp = keyUp;
+				m_lastkeyCode = keyCode;
 				break;
 
 			default:
+				m_lastkeyCode = keyCode;
 				break;
 		}
 
