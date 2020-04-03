@@ -260,7 +260,7 @@ void WindowClass::InitializeWindows(int& screenWidth, int& screenHeight)
 	SetForegroundWindow(m_hwnd);
 	SetFocus(m_hwnd);
 	
-	ShowCursor(true);
+	ShowCursor(false);
 	
 
 }

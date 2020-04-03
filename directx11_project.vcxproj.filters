@@ -99,6 +99,9 @@
     <ClCompile Include="RawKeyboard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ATexture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inputclass.h">
@@ -179,6 +182,9 @@
     <ClInclude Include="RawKeyboard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ATexture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -230,6 +236,12 @@
       <Filter>Source Files\shaders</Filter>
     </FxCompile>
     <FxCompile Include="x64\shaders\texture_vs.hlsl">
+      <Filter>Source Files\shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="x64\shaders\ps_texure.hlsl">
+      <Filter>Source Files\shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="x64\shaders\vs_texure.hlsl">
       <Filter>Source Files\shaders</Filter>
     </FxCompile>
   </ItemGroup>

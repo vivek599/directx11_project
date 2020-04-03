@@ -11,6 +11,7 @@
 
 #include "LightClass.h"
 #include "PointLightClass.h"
+#include "ATexture.h"
 
 const bool FULL_SCREEN = false;
 const bool VSYNCE_ENABLED = false;
@@ -46,6 +47,7 @@ private:
 		
 	unique_ptr < LightClass> m_Light;
 	unique_ptr < Canvas2D> m_canvas2D;
+	unique_ptr <ATexture> m_WorldTextQuad;
 	
 	Mat4 m_ViewMatrix2D;
 

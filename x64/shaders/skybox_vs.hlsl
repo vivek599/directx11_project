@@ -29,7 +29,7 @@ PixelInputType main(VertexInputType input)
 
 	output.position = mul(input.position, worldMatrix);
 	output.position = mul(output.position, viewMatrix);
-	output.position = mul(output.position, projMatrix );
+	output.position = mul(output.position, projMatrix ).xyww;
 
 	output.tex = input.tex;
 

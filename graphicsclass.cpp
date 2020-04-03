@@ -49,6 +49,9 @@ bool GraphicClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	result = m_Bitmap->Initialize(m_D3D->GetDevice().Get(), hwnd, screenWidth, screenHeight, (WCHAR*)L"../Textures/stone_wall1.jpg", 128, 128);
 	assert(result);
 
+	m_WorldTextQuad.reset(new ATexture( m_D3D.get() ));
+
+
 
 	// Create the light object.
 	m_Light.reset( new LightClass());
@@ -132,6 +135,7 @@ bool GraphicClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_canvas2D.reset(new Canvas2D());
 	assert(m_canvas2D);
 	m_canvas2D->Initialize(m_D3D.get());
+	m_canvas2D->InitializeWorldText( m_WorldTextQuad.get() );
 
 	return true;
 	
@@ -342,6 +346,13 @@ bool GraphicClass::RenderScene(float deltaTime, bool depthPass)
 		}
 
 	}
+
+	m_WorldTextQuad->SetScale( 1.0f );
+	m_WorldTextQuad->SetPosition( Vector3(0.0f, 10.0f, 0.0f) );
+
+	m_WorldTextQuad->Update(world, view, projection);
+	m_WorldTextQuad->Render(m_D3D.get());
+
 
 	return true;
 }
