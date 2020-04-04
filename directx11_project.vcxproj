@@ -193,6 +193,7 @@
     <ClInclude Include="BoundingBoxShader.h" />
     <ClInclude Include="cameraclass.h" />
     <ClInclude Include="Canvas2D.h" />
+    <ClInclude Include="common_def.h" />
     <ClInclude Include="CpuUsageClass.h" />
     <ClInclude Include="depthshaderclass.h" />
     <ClInclude Include="FrustumClass.h" />

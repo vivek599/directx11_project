@@ -15,7 +15,6 @@
 
 #include <d2d1_3.h>
 #include <dwrite.h>
-#include <d3d10_1.h>
 #include <d3d11.h>
 #include <dxgi.h>
 #include <d3dcommon.h>
@@ -66,4 +65,4 @@ const float DEG_TO_RAD = 0.0174532925f;
 
 //#include <vld.h>
 
-
+#include "common_def.h"
