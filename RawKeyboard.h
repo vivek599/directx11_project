@@ -21,7 +21,11 @@ public:
 	void ResetAllKeyData();
 
 	bool IsEscapeKeyDown() { return m_bEscDown; }
-	bool IsAlphabeticKeyDown(int nLetter) { return m_bAlphabet[0][nLetter - 'A']; }
+	bool IsAlphabeticKeyDown(int nLetter)
+	{ 
+		return GetAsyncKeyState( nLetter); 
+		//return m_bAlphabet[0][nLetter - 'A']; 
+	}
 	bool IsAlphabeticKeyDownOnce(int nLetter) { return m_bAlphabet[0][nLetter - 'A'] && !m_bAlphabet[1][nLetter - 'A']; }
 	bool IsArrowKeyDown(int nArrowDirection) { return m_bArrows[0][nArrowDirection - VK_LEFT]; }
 	void updateKeyData();

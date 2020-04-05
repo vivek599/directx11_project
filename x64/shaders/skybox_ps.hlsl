@@ -16,7 +16,7 @@ float4 main(PixelInputType input) : SV_TARGET
 
 	textureColor = shaderTexture.Sample(sampleType, input.tex );
 	
-    const float maxFogHeight = 300.0f;
+    const float maxFogHeight = 500.0f;
 	
     float heightGradiant = input.fogHeight / maxFogHeight;
     

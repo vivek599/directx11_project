@@ -49,7 +49,7 @@ PixelInputType main(VertexInputType input)
 	float4 worldPosition;
 
     const float fogDensity = 0.007f;
-    const float fogGradient = 2.5f;
+    const float fogGradient = 5.0f;
 	
 	
 	input.position.w = 1.0f;
