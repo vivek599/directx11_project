@@ -18,7 +18,7 @@ bool TextureClass::Initialize(ID3D11Device* device, const WCHAR* path)
 
 	//result = D3DX11CreateShaderResourceViewFromFile(device, path, NULL, NULL, &m_Texture, NULL );
 	result = CreateWICTextureFromFile(device, path, NULL, m_Texture.GetAddressOf());
-	assert(SUCCEEDED(result));
+	MYASSERT(SUCCEEDED(result));
 
 
 	return true;

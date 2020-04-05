@@ -19,7 +19,7 @@ bool ModelShaderClass::Initialize(ID3D11Device* device, HWND hwnd)
 	bool result;
 
 	result = InitializeShader(device, hwnd, (WCHAR*)L"../shaders/model_light_shadows_vs.hlsl", (WCHAR*)L"../shaders/model_light_shadows_ps.hlsl");
-	assert(result);
+	MYASSERT(result);
 
 
 	return true;
@@ -38,7 +38,7 @@ bool ModelShaderClass::Render(ID3D11DeviceContext* context, int indexCount, Mat4
 
 	result = SetShaderParameter(context, indexCount, world, view, proj, light, lightViewMatrix, lightProjectionMatrix, 
 		textureArray, depthMapTexture, cameraPosition );
-	assert(result);
+	MYASSERT(result);
 
 
 	RenderShader(context, indexCount);

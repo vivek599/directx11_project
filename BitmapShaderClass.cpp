@@ -17,7 +17,7 @@ bool BitmapShaderClass::Initialize(ID3D11Device* device, HWND hwnd)
 	bool result;
 
 	result = InitializeShaders(device, hwnd, (WCHAR*)L"../shaders/texture_vs.hlsl", (WCHAR*)L"../shaders/texture_ps.hlsl");
-	assert(result);
+	MYASSERT(result);
 
 	return true;
 

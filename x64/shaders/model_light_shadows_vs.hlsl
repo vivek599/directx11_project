@@ -40,6 +40,7 @@ struct PixelInputType
 	float3 viewDirection : TEXCOORD1; 
 	float4 lightViewPosition : TEXCOORD2;
 	float3 lightPos : TEXCOORD3;
+    float  visibility : TEXCOORD4;
 };
 
 PixelInputType main(VertexInputType input)
@@ -47,11 +48,21 @@ PixelInputType main(VertexInputType input)
 	PixelInputType output;
 	float4 worldPosition;
 
+    const float fogDensity = 0.007f;
+    const float fogGradient = 2.5f;
+	
+	
 	input.position.w = 1.0f;
 
 	output.position = mul(input.position, worldMatrix);
 	output.position = mul(output.position, viewMatrix);
-	output.position = mul(output.position, projMatrix );
+    float4 distFromCamera = output.position;
+	output.position = mul(output.position, projMatrix);
+	
+    float distance = length(distFromCamera.xyz);
+    output.visibility = exp(-pow((distance*fogDensity), fogGradient));
+    output.visibility = clamp( output.visibility, 0.0f, 1.0f );
+    output.visibility = 1.0f - output.visibility;
 	
 	//Here we transform the vertex based on the light's perspective.
     // Calculate the position of the vertice as viewed by the light source.

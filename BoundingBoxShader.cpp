@@ -19,7 +19,7 @@ bool BoundingBoxShader::Initialize(ID3D11Device* device, HWND hwnd)
 	bool result;
 
 	result = InitializeShader(device, hwnd );
-	assert(result);
+	MYASSERT(result);
 
 	return true;
 }
@@ -35,7 +35,7 @@ bool BoundingBoxShader::Render(ID3D11DeviceContext* context, int indexCount, Mat
 	bool result;
 
 	result = SetShaderParameter(context, indexCount, world, view, proj );
-	assert(result);
+	MYASSERT(result);
 
 	RenderShader(context, indexCount);
 
@@ -123,10 +123,10 @@ bool BoundingBoxShader::InitializeShader(ID3D11Device* device, HWND hwnd )
 	}
 
 	hr = device->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), NULL, m_vertexShader.GetAddressOf());
-	assert(SUCCEEDED(hr));
+	MYASSERT(SUCCEEDED(hr));
 
 	hr = device->CreatePixelShader(pixelShaderBuffer->GetBufferPointer(), pixelShaderBuffer->GetBufferSize(), NULL, m_pixelShader.GetAddressOf());
-	assert(SUCCEEDED(hr));
+	MYASSERT(SUCCEEDED(hr));
 
 	polygonLayout[0].SemanticName = "POSITION";
 	polygonLayout[0].SemanticIndex = 0;
@@ -139,7 +139,7 @@ bool BoundingBoxShader::InitializeShader(ID3D11Device* device, HWND hwnd )
 	numElement = sizeof(polygonLayout) / sizeof(polygonLayout[0]);
 
 	hr = device->CreateInputLayout(polygonLayout, numElement, vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), m_inputLayout.GetAddressOf());
-	assert(SUCCEEDED(hr));
+	MYASSERT(SUCCEEDED(hr));
 
 	// Setup the description of the dynamic matrix constant buffer that is in the vertex shader.
 	matrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
@@ -150,7 +150,7 @@ bool BoundingBoxShader::InitializeShader(ID3D11Device* device, HWND hwnd )
 	matrixBufferDesc.StructureByteStride = 0;
 
 	hr = device->CreateBuffer(&matrixBufferDesc, NULL, m_matrixBuffer.ReleaseAndGetAddressOf());
-	assert(SUCCEEDED(hr));
+	MYASSERT(SUCCEEDED(hr));
 
 	return true;
 
@@ -200,7 +200,7 @@ bool BoundingBoxShader::SetShaderParameter(ID3D11DeviceContext* context, int ind
 	proj = XMMatrixTranspose(proj);
 
 	hr = context->Map(m_matrixBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	assert(SUCCEEDED(hr));
+	MYASSERT(SUCCEEDED(hr));
 
 	mdataPtr = (MatrixBufferType*)mappedResource.pData;
 	mdataPtr->world = world;

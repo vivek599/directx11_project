@@ -22,7 +22,7 @@ bool DepthShaderClass::Initialize(ID3D11Device* device, HWND hwnd)
 
 	// Initialize the vertex and pixel shaders.
 	result = InitializeShader(device, hwnd, (WCHAR*)L"../shaders/depth_vs.hlsl", (WCHAR*)L"../shaders/depth_ps.hlsl");
-	assert(result);
+	MYASSERT(result);
 
 
 	return true;

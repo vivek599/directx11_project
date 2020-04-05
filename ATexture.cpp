@@ -341,7 +341,7 @@ void ATexture::SetScale(float scale)
 IDXGISurface* ATexture::GetDXGISurface()
 {
 	HRESULT hr = m_textureResource->QueryInterface(m_textSurface.ReleaseAndGetAddressOf());
-	assert(SUCCEEDED(hr));
+	MYASSERT(SUCCEEDED(hr));
 
 	return m_textSurface.Get();
 }

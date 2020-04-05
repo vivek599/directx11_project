@@ -53,21 +53,21 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsyncEnabled, 
 
 	//creat directx graphic interface factory
 	result = CreateDXGIFactory( IID_PPV_ARGS(factory.GetAddressOf()));
-	assert(SUCCEEDED(result));
+	MYASSERT(SUCCEEDED(result));
  
 	//use factory to creat an adapter for primary graphic interface( video card )
 	result = factory->EnumAdapters(0, adapter.GetAddressOf());
-	assert(SUCCEEDED(result));
+	MYASSERT(SUCCEEDED(result));
 
 
 	//enumerate primary adapter output (monitor)
 	result = adapter->EnumOutputs(0, adapterOutput.GetAddressOf());
-	assert(SUCCEEDED(result));
+	MYASSERT(SUCCEEDED(result));
 
 	
 	//get the number of modes that fits DXGI_FORMAT_R8G8B8A8_UNORM display format for the monitor
 	result = adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, NULL);
-	assert(SUCCEEDED(result));
+	MYASSERT(SUCCEEDED(result));
 
 
 	displayModeList = new DXGI_MODE_DESC[numModes];
@@ -78,7 +78,7 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsyncEnabled, 
 
 	//fill the display mode list desc
 	result = adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, displayModeList);
-	assert(SUCCEEDED(result));
+	MYASSERT(SUCCEEDED(result));
 
 
 	for ( i = 0; i < numModes; i++)
@@ -94,7 +94,7 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsyncEnabled, 
 	}
 
 	result = adapter->GetDesc(&adapterDesc);
-	assert(SUCCEEDED(result));
+	MYASSERT(SUCCEEDED(result));
 
 	m_videoCardMemory = (int)adapterDesc.DedicatedVideoMemory / (1024*1024);
 	error = wcstombs_s(  &stringLength, m_videoCardDesc, 128, adapterDesc.Description, 128);
@@ -149,16 +149,16 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsyncEnabled, 
 	//create swap chain device and context
 	result = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, D3D11_CREATE_DEVICE_DEBUG | D3D11_CREATE_DEVICE_BGRA_SUPPORT, featureLevels, numFeaturelevels,
 		D3D11_SDK_VERSION, &swapChainDesc, m_swapChain.GetAddressOf(),  m_device.GetAddressOf(), &m_featureLevel, m_deviceContext.ReleaseAndGetAddressOf() );
-	assert(SUCCEEDED(result));
+	MYASSERT(SUCCEEDED(result));
 
 
 	result = m_swapChain->GetBuffer(0, IID_PPV_ARGS( m_backBuffer.GetAddressOf()));
-	assert(SUCCEEDED(result));
+	MYASSERT(SUCCEEDED(result));
 
 
 	//create render target view with back buffer pointer
 	result = m_device->CreateRenderTargetView(m_backBuffer.Get(), NULL, m_renderTargetView.GetAddressOf() );
-	assert(SUCCEEDED(result));
+	MYASSERT(SUCCEEDED(result));
 
  
 
@@ -180,7 +180,7 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsyncEnabled, 
 
 	//create texture for depth buffer
 	result = m_device->CreateTexture2D(&depthBufferDesc, NULL, m_depthStencilBuffer.GetAddressOf());
-	assert(SUCCEEDED(result));
+	MYASSERT(SUCCEEDED(result));
 
 	//depth stencil state
 	ZeroMemory(&depthStencilDesc, sizeof(depthStencilDesc));
@@ -207,10 +207,10 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsyncEnabled, 
 
 	//create depth stencil state
 	result = m_device->CreateDepthStencilState(&depthStencilDesc, m_depthStencilState.GetAddressOf());
-	assert(SUCCEEDED(result));
+	MYASSERT(SUCCEEDED(result));
 
-
-	GetContext()->OMSetDepthStencilState(m_depthStencilState.Get(), 1);
+	
+	m_deviceContext->OMSetDepthStencilState(m_depthStencilState.Get(), 1);
 
 	// init depth stencil view
 	ZeroMemory(&depthStencilViewDesc, sizeof(depthStencilViewDesc));
@@ -220,11 +220,11 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsyncEnabled, 
 	depthStencilViewDesc.Texture2D.MipSlice = 0;
 
 	result = m_device->CreateDepthStencilView(m_depthStencilBuffer.Get(), &depthStencilViewDesc, m_depthStencilView.GetAddressOf() );
-	assert(SUCCEEDED(result));
+	MYASSERT(SUCCEEDED(result));
 
 
 	// bind the render target view and depth stencil buffer  to the output render pipeline
-	GetContext()->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), m_depthStencilView.Get());
+	m_deviceContext->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), m_depthStencilView.Get());
 
 	rasterDesc.AntialiasedLineEnable = false;
 	rasterDesc.CullMode = D3D11_CULL_BACK;
@@ -238,10 +238,10 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsyncEnabled, 
 	rasterDesc.SlopeScaledDepthBias = 0.f;
 	
 	result = m_device->CreateRasterizerState(&rasterDesc, m_rasterState.GetAddressOf());
-	assert(SUCCEEDED(result));
+	MYASSERT(SUCCEEDED(result));
 
 
-	GetContext()->RSSetState(m_rasterState.Get());
+	m_deviceContext->RSSetState(m_rasterState.Get());
 
 	// Setup a raster description which turns off back face culling.
 	rasterDesc.AntialiasedLineEnable = false;
@@ -257,7 +257,7 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsyncEnabled, 
 
 	// Create the no culling rasterizer state.
 	result = m_device->CreateRasterizerState(&rasterDesc, m_rasterStateNoCulling.GetAddressOf());
-	assert(SUCCEEDED(result));
+	MYASSERT(SUCCEEDED(result));
 
 
 	//viewport to entire size of window
@@ -268,7 +268,7 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsyncEnabled, 
 	m_viewport.TopLeftX = 0.f;
 	m_viewport.TopLeftY = 0.f;
 
-	GetContext()->RSSetViewports(1, &m_viewport);
+	m_deviceContext->RSSetViewports(1, &m_viewport);
 
 	//projection matrix
 	fieldOfView = (float)XM_PI / 4.f;
@@ -304,7 +304,7 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsyncEnabled, 
 	depthDisableStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
 	result = m_device->CreateDepthStencilState(&depthDisableStencilDesc, m_DepthDisableStencilState.GetAddressOf() );
-	assert(SUCCEEDED(result));
+	MYASSERT(SUCCEEDED(result));
 
 
 
@@ -325,7 +325,7 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsyncEnabled, 
     blendStateDescription.RenderTarget[0].RenderTargetWriteMask = 0x0f;
 	// Create the blend state using the description.
 	result = m_device->CreateBlendState(&blendStateDescription, m_alphaEnableBlendingState.GetAddressOf());
-	assert(SUCCEEDED(result));
+	MYASSERT(SUCCEEDED(result));
 
 	return true;
 
@@ -349,10 +349,10 @@ void D3DClass::BeginScene(float red, float green, float blue, float alpha)
 	color[3] = alpha;
 
 	//clear back buffer
-	GetContext()->ClearRenderTargetView(m_renderTargetView.Get(), color);
+	m_deviceContext->ClearRenderTargetView(m_renderTargetView.Get(), color);
 	
 	//clear depth buffer
-	GetContext()->ClearDepthStencilView(m_depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.f, 0);
+	m_deviceContext->ClearDepthStencilView(m_depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.f, 0);
 
 	TurnOnAlphaBlending();
 
@@ -370,7 +370,7 @@ void D3DClass::EndScene()
 		// as fast as possible
 		m_swapChain->Present(0, 0);
 	}
-	GetContext()->Flush();
+	m_deviceContext->Flush();
 }
 
 ComPtr<ID3D11Device> D3DClass::GetDevice()
@@ -378,24 +378,19 @@ ComPtr<ID3D11Device> D3DClass::GetDevice()
 	return m_device;
 }
 
-ComPtr < ID3D11DeviceContext> D3DClass::GetDeviceContext()
+Mat4 D3DClass::GetProjectionMatrix()
 {
-	return GetContext();
+	return m_projectionMatrix;
 }
 
-void D3DClass::GetProjectionMatrix(Mat4& projectionMatrix)
+Mat4 D3DClass::GetWorldMatrix()
 {
-	projectionMatrix = m_projectionMatrix;
+	return m_worldMatrix;
 }
 
-void D3DClass::GetWorldMatrix(Mat4& worldMatrix)
+Mat4 D3DClass::GetOrthoMatrix()
 {
-	worldMatrix = m_worldMatrix;
-}
-
-void D3DClass::GetOrthoMatrix(Mat4& orthoMatrix)
-{
-	orthoMatrix = m_orthoMatrix;
+	return m_orthoMatrix;
 }
 
 void D3DClass::GetVideoCardInfo(char* cardName, int& memory)
@@ -446,7 +441,7 @@ void D3DClass::TurnOnAlphaBlending()
 	blendFactor[3] = 0.0f;
 
 	// Turn on the alpha blending.
-	GetContext()->OMSetBlendState(m_alphaEnableBlendingState.Get(), blendFactor, 0xffffffff);
+	m_deviceContext->OMSetBlendState(m_alphaEnableBlendingState.Get(), blendFactor, 0xffffffff);
 
 }
 
@@ -458,7 +453,7 @@ ComPtr < ID3D11DepthStencilView> D3DClass::GetDepthStencilView()
 void D3DClass::SetBackBufferRenderTarget()
 {
 	// Bind the render target view and depth stencil buffer to the output render pipeline.
-	GetContext()->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), m_depthStencilView.Get());
+	m_deviceContext->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), m_depthStencilView.Get());
 }
 
 ID3D11Texture2D* D3DClass::GetBackBuffer()
@@ -469,7 +464,7 @@ ID3D11Texture2D* D3DClass::GetBackBuffer()
 ComPtr<IDXGISurface> D3DClass::GetBackBufferSurface()
 {
 	HRESULT hr = m_swapChain->GetBuffer(0, IID_PPV_ARGS(m_backBufferSurface.ReleaseAndGetAddressOf()));
-	assert(SUCCEEDED(hr));
+	MYASSERT(SUCCEEDED(hr));
 
 	return m_backBufferSurface;
 }
@@ -481,30 +476,30 @@ IDXGISwapChain* D3DClass::GetSwapChain()
 
 void D3DClass::TurnZBufferOn()
 {
-	GetContext()->OMSetDepthStencilState(m_depthStencilState.Get(), 1);
+	m_deviceContext->OMSetDepthStencilState(m_depthStencilState.Get(), 1);
 }
 
 void D3DClass::TurnZBufferOff()
 {
-	GetContext()->OMSetDepthStencilState(m_DepthDisableStencilState.Get(), 1);
+	m_deviceContext->OMSetDepthStencilState(m_DepthDisableStencilState.Get(), 1);
 }
 
 void D3DClass::TurnOnCulling()
 {
 	// Set the culling rasterizer state.
-	GetContext()->RSSetState(m_rasterState.Get());
+	m_deviceContext->RSSetState(m_rasterState.Get());
 }
 
 void D3DClass::TurnOffCulling()
 {
 	// Set the culling rasterizer state.
-	GetContext()->RSSetState(m_rasterStateNoCulling.Get());
+	m_deviceContext->RSSetState(m_rasterStateNoCulling.Get());
 }
 
 void D3DClass::ResetViewport()
 {
 	// Set the viewport.
-	GetContext()->RSSetViewports(1, &m_viewport);
+	m_deviceContext->RSSetViewports(1, &m_viewport);
 
 }
 

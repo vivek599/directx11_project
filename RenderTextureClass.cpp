@@ -38,7 +38,7 @@ bool RenderTextureClass::Initialize(ID3D11Device* device, int textureWidth, int 
 
 	// Create the render target texture.
 	hr = device->CreateTexture2D(&textureDesc, NULL, m_renderTargetTexture.GetAddressOf());
-	assert(SUCCEEDED(hr));
+	MYASSERT(SUCCEEDED(hr));
 
 	// Setup the description of the render target view.
 	renderTargetViewDesc.Format = textureDesc.Format;
@@ -47,7 +47,7 @@ bool RenderTextureClass::Initialize(ID3D11Device* device, int textureWidth, int 
 
 	// Create the render target view.
 	hr = device->CreateRenderTargetView(m_renderTargetTexture.Get(), &renderTargetViewDesc, m_renderTargetView.GetAddressOf());
-	assert(!FAILED(hr));
+	MYASSERT(!FAILED(hr));
 
 
 	// Setup the description of the shader resource view.
@@ -58,7 +58,7 @@ bool RenderTextureClass::Initialize(ID3D11Device* device, int textureWidth, int 
 
 	// Create the shader resource view.
 	hr = device->CreateShaderResourceView(m_renderTargetTexture.Get(), &shaderResourceViewDesc, m_shaderResourceView.GetAddressOf());
-	assert(!FAILED(hr));
+	MYASSERT(!FAILED(hr));
 
 	// Initialize the description of the depth buffer.
 	ZeroMemory(&depthBufferDesc, sizeof(depthBufferDesc));
@@ -78,7 +78,7 @@ bool RenderTextureClass::Initialize(ID3D11Device* device, int textureWidth, int 
 
 	// Create the texture for the depth buffer using the filled out description.
 	hr = device->CreateTexture2D(&depthBufferDesc, NULL, m_depthStencilBuffer.GetAddressOf());
-	assert(SUCCEEDED(hr));
+	MYASSERT(SUCCEEDED(hr));
  
 
 	// Initailze the depth stencil view description.
@@ -91,7 +91,7 @@ bool RenderTextureClass::Initialize(ID3D11Device* device, int textureWidth, int 
 
 	// Create the depth stencil view.
 	hr = device->CreateDepthStencilView(m_depthStencilBuffer.Get(), &depthStencilViewDesc, m_depthStencilView.GetAddressOf());
-	assert(SUCCEEDED(hr));
+	MYASSERT(SUCCEEDED(hr));
 
 
 	// Setup the viewport for rendering.

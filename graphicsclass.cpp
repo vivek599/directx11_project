@@ -19,35 +19,35 @@ bool GraphicClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	bool result;
 	 
 	m_D3D.reset( new D3DClass());
-	assert(m_D3D);
+	MYASSERT(m_D3D);
 
 
 	result = m_D3D->Initialize(screenWidth, screenHeight, VSYNCE_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR );
 	
-	assert(result);
+	MYASSERT(result);
  
 
 	//write video card info to a file
 	m_D3D->WriteVideoCardInfoToFile();
 
 	m_Camera.reset(new CameraClass());
-	assert(m_Camera);
+	MYASSERT(m_Camera);
  
 	m_Camera->SetPosition(0.f, 0.f, -40.f);
 	m_Camera->Render(0.f);
-	m_Camera->GetViewMatrix(m_ViewMatrix2D);
+	m_ViewMatrix2D = m_Camera->GetViewMatrix();
 
 	// Create the frustum object.
 	m_frustum.reset( new FrustumClass());
-	assert(m_frustum);
+	MYASSERT(m_frustum);
  
 
 	m_Bitmap.reset(new BitmapClass());
-	assert(m_Bitmap);
+	MYASSERT(m_Bitmap);
 
 
 	result = m_Bitmap->Initialize(m_D3D->GetDevice().Get(), hwnd, screenWidth, screenHeight, (WCHAR*)L"../Textures/stone_wall1.jpg", 128, 128);
-	assert(result);
+	MYASSERT(result);
 
 	m_WorldTextQuad.reset(new ATexture( m_D3D.get() ));
 
@@ -55,7 +55,7 @@ bool GraphicClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	// Create the light object.
 	m_Light.reset( new LightClass());
-	assert(m_Light);
+	MYASSERT(m_Light);
 
 
 	// Initialize the light object.
@@ -71,12 +71,12 @@ bool GraphicClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	// Create the render to texture object.
 	m_renderTexture.reset( new RenderTextureClass());
-	assert(m_renderTexture);
+	MYASSERT(m_renderTexture);
 
 
 	// Initialize the render to texture object.
 	result = m_renderTexture->Initialize(m_D3D->GetDevice().Get(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_NEAR, SCREEN_DEPTH);
-	assert(result);
+	MYASSERT(result);
 
 
 #if 1
@@ -119,7 +119,7 @@ bool GraphicClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	
 	for (int i = 0; i < m_Models.size(); i++)
 	{
-		assert(m_Models[i]);
+		MYASSERT(m_Models[i]);
 // 		if (!m_Models[i])
 // 		{
 // 			return false;
@@ -127,13 +127,13 @@ bool GraphicClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 	
 	m_skybox.reset( new SkyboxClass());
-	assert(m_skybox);
+	MYASSERT(m_skybox);
 
 	result = m_skybox->Initialize(m_D3D->GetDevice().Get());
-	assert(result);
+	MYASSERT(result);
 
 	m_canvas2D.reset(new Canvas2D());
-	assert(m_canvas2D);
+	MYASSERT(m_canvas2D);
 	m_canvas2D->Initialize(m_D3D.get());
 	m_canvas2D->InitializeWorldText( m_WorldTextQuad.get() );
 
@@ -182,9 +182,13 @@ bool GraphicClass::Frame(float deltaTime)
 
 bool GraphicClass::Render(float deltaTime)
 {
-	Mat4 world, view, projection, ortho;
 	bool result;
-	
+
+	Mat4 view = m_Camera->GetViewMatrix();
+	Mat4 world = m_D3D->GetWorldMatrix();
+	Mat4 projection = m_D3D->GetProjectionMatrix();
+	Mat4 ortho = m_D3D->GetOrthoMatrix();
+
 	//The first pass of our render is to a texture now.
 	// Render the entire scene to the texture first.
 	result = RenderToTexture(deltaTime);
@@ -205,13 +209,16 @@ bool GraphicClass::Render(float deltaTime)
 		return false;
 	}
 
+	m_WorldTextQuad->SetScale(1.0f);
+	m_WorldTextQuad->SetPosition(Vector3(0.0f, 10.0f, 0.0f));
+
+	m_WorldTextQuad->Update(world, view, projection);
+	m_WorldTextQuad->Render(m_D3D.get());
+
 	//turn off z buffer to begin 2d drawing
 	m_D3D->TurnZBufferOff();
 
-	m_D3D->GetWorldMatrix(world);
-	m_D3D->GetOrthoMatrix(ortho);
-
-	result = m_Bitmap->Render(m_D3D->GetDeviceContext().Get(), world, m_ViewMatrix2D, ortho, 100, 100, m_renderTexture->GetShaderResourceView().Get());
+	result = m_Bitmap->Render(m_D3D->GetContext().Get(), world, m_ViewMatrix2D, ortho, 100, 100, m_renderTexture->GetShaderResourceView().Get());
 	if (!result)
 	{
 		return false;
@@ -244,11 +251,11 @@ bool GraphicClass::RenderToTexture(float deltaTime)
 
 
 	// Set the render target to be the render to texture.
-	m_renderTexture->SetRenderTarget(m_D3D->GetDeviceContext().Get());
+	m_renderTexture->SetRenderTarget(m_D3D->GetContext().Get());
 	
 	//Clear the render to texture background to blue so we can differentiate it from the rest of the normal scene.
 	// Clear the render to texture.
-	m_renderTexture->ClearRenderTarget(m_D3D->GetDeviceContext().Get(), 0.0f, 0.0f, 1.0f, 1.0f);
+	m_renderTexture->ClearRenderTarget(m_D3D->GetContext().Get(), 0.0f, 0.0f, 1.0f, 1.0f);
 
 	// Render the scene now and it will draw to the render to texture instead of the back buffer. /*depthpass - true*/
 	result = RenderScene(deltaTime, true);
@@ -269,8 +276,6 @@ bool GraphicClass::RenderToTexture(float deltaTime)
 bool GraphicClass::RenderScene(float deltaTime, bool depthPass)
 {
 	bool result;
-	Mat4 world, view, projection, ortho;
-	Mat4 lightViewMatrix, lightProjectionMatrix;
 	static float yaw;
 	static float angleCntr = 0;
 
@@ -283,17 +288,18 @@ bool GraphicClass::RenderScene(float deltaTime, bool depthPass)
 	m_Camera->Update(deltaTime);
 	m_Camera->Render(deltaTime);
 
-	m_Camera->GetViewMatrix(view);
-	m_D3D->GetWorldMatrix(world);
-	m_D3D->GetProjectionMatrix(projection);
-	m_D3D->GetOrthoMatrix(ortho);
+	Mat4 view = m_Camera->GetViewMatrix();
+	Mat4 world = m_D3D->GetWorldMatrix();
+	Mat4 projection = m_D3D->GetProjectionMatrix();
+	Mat4 ortho = m_D3D->GetOrthoMatrix();
 	
 	// Generate the light view matrix based on the light's position.
 	m_Light->GenerateViewMatrix();
 
 	// Get the view and orthographic matrices from the light object.
-	m_Light->GetViewMatrix(lightViewMatrix);
-	m_Light->GetProjectionMatrix(lightProjectionMatrix); 
+	Mat4 lightViewMatrix = m_Light->GetViewMatrix();
+	Mat4 lightProjectionMatrix = m_Light->GetProjectionMatrix(); 
+
 	// Construct the frustum.
 	m_frustum->ConstructFrustum(SCREEN_DEPTH, projection, view);
 
@@ -305,7 +311,7 @@ bool GraphicClass::RenderScene(float deltaTime, bool depthPass)
 		// Turn off the Z buffer.
 		m_D3D->TurnZBufferOff();
 		// Render the sky dome using the sky dome shader.
-		result = m_skybox->Render(m_D3D->GetDeviceContext().Get(), world, view, projection, m_Camera->GetPosition());
+		result = m_skybox->Render(m_D3D->GetContext().Get(), world, view, projection, m_Camera->GetPosition());
 		if (!result)
 		{
 			return false;
@@ -338,7 +344,7 @@ bool GraphicClass::RenderScene(float deltaTime, bool depthPass)
 		Vector3 pos = m_Models[i]->GetPosition();
 		if (m_frustum->CheckBox(m_Models[i]->GetBBox().min, m_Models[i]->GetBBox().max))
 		{
-			result = m_Models[i]->Render(m_D3D->GetDeviceContext().Get(), m_renderTexture.get(), m_Light.get(), m_Camera.get(), world, view, projection, lightViewMatrix, lightProjectionMatrix, depthPass);
+			result = m_Models[i]->Render(m_D3D->GetContext().Get(), m_renderTexture.get(), m_Light.get(), m_Camera.get(), world, view, projection, lightViewMatrix, lightProjectionMatrix, depthPass);
 			if (!result)
 			{
 				return false;
@@ -346,13 +352,6 @@ bool GraphicClass::RenderScene(float deltaTime, bool depthPass)
 		}
 
 	}
-
-	m_WorldTextQuad->SetScale( 1.0f );
-	m_WorldTextQuad->SetPosition( Vector3(0.0f, 10.0f, 0.0f) );
-
-	m_WorldTextQuad->Update(world, view, projection);
-	m_WorldTextQuad->Render(m_D3D.get());
-
 
 	return true;
 }

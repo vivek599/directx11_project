@@ -41,7 +41,7 @@ void LightClass::SetPosition(float x, float y, float z)
 	m_position = Vector3(x, y, z);
 }
 
-DirectX::SimpleMath::Vector3 LightClass::GetPosition()
+Vector3 LightClass::GetPosition()
 {
 	return m_position;
 }
@@ -79,22 +79,21 @@ void LightClass::GenerateOrthoMatrix(float screenNear, float screenDepth)
 {
 	// Create the projection matrix for the light.
 	m_orthoMatrix = XMMatrixOrthographicLH(2048.0f, 2048.0f, screenNear, screenDepth);
-
 }
 
-void LightClass::GetViewMatrix(Mat4& viewMatrix )
+Mat4 LightClass::GetViewMatrix()
 {
-	viewMatrix = (m_viewMatrix);
+	return m_viewMatrix;
 }
 
-void LightClass::GetProjectionMatrix(Mat4& projMatrix)
+Mat4 LightClass::GetProjectionMatrix()
 {
-	projMatrix = (m_projectionMatrix);
+	return m_projectionMatrix;
 }
 
-void LightClass::GetOrthoMatrix(Mat4& orthoMatrix)
+Mat4 LightClass::GetOrthoMatrix()
 {
-	orthoMatrix = (m_orthoMatrix);
+	return m_orthoMatrix;
 }
 
 Vector4 LightClass::GetAmbientColor()

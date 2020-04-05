@@ -26,6 +26,7 @@ struct PixelInputType
 	float3 viewDirection : TEXCOORD1;
 	float4 lightViewPosition : TEXCOORD2;
 	float3 lightPos : TEXCOORD3;
+    float  visibility : TEXCOORD4;
 };
 
 float4 blurPixel(float4 color, float2 uv )
@@ -111,8 +112,6 @@ float4 main(PixelInputType input) : SV_TARGET
 
                 // Determine the amount of specular light based on the reflection vector, viewing direction, and specular power.
                 specular = pow(saturate(dot(reflection, input.viewDirection)), specularPower);
-			    	
-		        
             }
         } 
  
@@ -124,5 +123,8 @@ float4 main(PixelInputType input) : SV_TARGET
     
 	// Add the specular component last to the output color. 
 	color = saturate(color + specular);
+    
+    color = lerp(color, float4(1.0f, 1.0f, 1.0f, 1.0f), input.visibility );
+    
 	return color;
 }

@@ -19,7 +19,7 @@ void RawKeyboard::Initialize(HWND hwnd)
 	ridKeyboard.dwFlags = RIDEV_NOLEGACY;
 	ridKeyboard.hwndTarget = hwnd;
 
-	assert(RegisterRawInputDevices(&ridKeyboard, 1, sizeof(ridKeyboard)) != FALSE);
+	MYASSERT(RegisterRawInputDevices(&ridKeyboard, 1, sizeof(ridKeyboard)) != FALSE);
 	ResetAllKeyData();
 }
 

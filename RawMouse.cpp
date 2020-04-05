@@ -19,7 +19,7 @@ void RawMouse::Initialize(HWND hwnd)
 	ridMouse.dwFlags = RIDEV_NOLEGACY;
 	ridMouse.hwndTarget = hwnd;
 
-	assert(RegisterRawInputDevices(&ridMouse, 1, sizeof(ridMouse)) != FALSE);
+	MYASSERT(RegisterRawInputDevices(&ridMouse, 1, sizeof(ridMouse)) != FALSE);
 }
 
 void RawMouse::update(LPARAM lparam)

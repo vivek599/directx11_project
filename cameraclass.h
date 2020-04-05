@@ -19,7 +19,7 @@ public:
 
 	void Update(float deltaTime);
 	void Render(float deltaTime);
-	void GetViewMatrix(Mat4& viewmatrix);
+	Mat4 GetViewMatrix();
 
 private:
 	Vector3 m_Position;

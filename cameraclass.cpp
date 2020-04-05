@@ -52,9 +52,9 @@ void CameraClass::Render(float deltaTime)
 	m_ViewMatrix = XMMatrixLookAtLH(m_Position, m_lookAt, m_up);
 }
 
-void CameraClass::GetViewMatrix(Mat4& viewmatrix)
+Mat4 CameraClass::GetViewMatrix()
 {
-	viewmatrix = m_ViewMatrix;
+	return m_ViewMatrix;
 }
 
 void CameraClass::Fly(float deltaTime)

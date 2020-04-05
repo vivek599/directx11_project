@@ -18,11 +18,10 @@ public:
 	void EndScene();
 
 	ComPtr<ID3D11Device> GetDevice();
-	ComPtr<ID3D11DeviceContext> GetDeviceContext();
 
-	void GetProjectionMatrix(Mat4& projectionMatrix);
-	void GetWorldMatrix(Mat4& worldMatrix);
-	void GetOrthoMatrix(Mat4& orthoMatrix);
+	Mat4 GetProjectionMatrix();
+	Mat4 GetWorldMatrix();
+	Mat4 GetOrthoMatrix();
 
 	void GetVideoCardInfo(char* cardName, int& memory);
 	void WriteVideoCardInfoToFile();

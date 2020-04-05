@@ -28,7 +28,6 @@
 #include <SimpleMath.h>
 
 #pragma comment(lib, "dxgi.lib")
-#pragma comment(lib, "D3D10_1.lib") 
 #pragma comment(lib, "d3d11.lib") 
 #pragma comment(lib, "D3DCompiler.lib") 
 #pragma comment(lib, "d2d1.lib" )
@@ -57,11 +56,6 @@ using namespace DirectX::SimpleMath;
 
 typedef Matrix Mat4;
 
-const float DEG_TO_RAD = 0.0174532925f;
-
-#define SAFE_DELETE(a) if( (a) != NULL ) delete (a); (a) = NULL;
-
-#define DXASSERT(a) assert(SUCCEEDED(a))
 
 //#include <vld.h>
 

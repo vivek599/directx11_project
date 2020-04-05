@@ -17,13 +17,13 @@ bool BoundingBoxClass::Initialize(ID3D11Device* device, void* buffer, int size )
 	//m_BBoxVertexCount = size;
 
 	m_BBoxShader.reset(new BoundingBoxShader());
-	assert(m_BBoxShader);
+	MYASSERT(m_BBoxShader);
 
 	result = m_BBoxShader->Initialize(device, GetActiveWindow());
-	assert(result);
+	MYASSERT(result);
 
 	result = InitializeBuffers(device, buffer, size);
-	assert(result);
+	MYASSERT(result);
 
 	return true;
 
@@ -41,7 +41,7 @@ bool BoundingBoxClass::Render(ID3D11DeviceContext* context, Mat4 world, Mat4 vie
 	RenderBuffers(context);
 	
 	result = m_BBoxShader->Render(context, m_IndexCount, world, view, proj );
-	assert(result);
+	MYASSERT(result);
 
 	return true;
 }
@@ -64,7 +64,7 @@ bool BoundingBoxClass::InitializeBuffers(ID3D11Device* device, void* buffer, int
 	bbox_vertexData.SysMemSlicePitch = 0;
 
 	hr = device->CreateBuffer(&bbox_vertexBufferDesc, &bbox_vertexData, m_BBoxVertexBuffer.GetAddressOf());
-	assert(SUCCEEDED(hr));
+	MYASSERT(SUCCEEDED(hr));
 	
 	indices.resize(36);
 
@@ -106,7 +106,7 @@ bool BoundingBoxClass::InitializeBuffers(ID3D11Device* device, void* buffer, int
 	bbox_indexData.SysMemSlicePitch = 0;
 
 	hr = device->CreateBuffer(&bbox_indexBufferDesc, &bbox_indexData, m_BBoxIndexBuffer.GetAddressOf());
-	assert(SUCCEEDED(hr));
+	MYASSERT(SUCCEEDED(hr));
 
 	return true;
 }

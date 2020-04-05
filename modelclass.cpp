@@ -42,36 +42,36 @@ bool ModelClass::Initialize(ID3D11Device* device, const char* modelFilename, con
 
 	// Create the light shader object.
 	m_ModelShader.reset( new ModelShaderClass());
-	assert(m_ModelShader);
+	MYASSERT(m_ModelShader);
 
 
 	// Initialize the light shader object.
 	result = m_ModelShader->Initialize(device, GetActiveWindow());
-	assert(result);
+	MYASSERT(result);
 
 
 	// Create the light shader object.
 	m_depthShader.reset(new DepthShaderClass());
-	assert(m_depthShader);
+	MYASSERT(m_depthShader);
 
 
 	// Initialize the m_depthShader shader object.
 	result = m_depthShader->Initialize(device, GetActiveWindow());
-	assert(result);
+	MYASSERT(result);
 
 
 	// Load in the model data,
 	result = LoadModel(modelFilename);
-	assert(result);
+	MYASSERT(result);
 
 
 	result = InitializeBuffers(device);
-	assert(result);
+	MYASSERT(result);
 
 	m_BBox.reset(new BoundingBoxClass( device, bbox_vertices.data(), bbox_vertices.size()));
 
 	result = LoadTexture(device, textureFilename, normalFilename);
-	assert(result);
+	MYASSERT(result);
 
 
 	return true;
@@ -103,17 +103,17 @@ bool ModelClass::Render(ID3D11DeviceContext* context, RenderTextureClass* render
 	{
 		// Render the model using the depth shader.
 		result = m_depthShader->Render(context, GetIndexCount(), m_finalMatrix, lightViewMatrix, lightProjectionMatrix, camera->GetPosition());
-		assert(result);
+		MYASSERT(result);
 
 	}
 	else
 	{
 		// Render the model using the model light shader.
 		result = m_ModelShader->Render( context, GetIndexCount(), m_finalMatrix, view, proj, light, lightViewMatrix, lightProjectionMatrix, GetTextureArray(), renderTexture->GetShaderResourceView().Get(), camera->GetPosition() );
-		assert(result);
+		MYASSERT(result);
 
 		result = m_BBox->Render(context, m_finalMatrix, view, proj);
-		assert(result);
+		MYASSERT(result);
 
 	}
 
@@ -179,7 +179,7 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 	vertexData.SysMemSlicePitch = 0;
 
 	hr = device->CreateBuffer(&vertexBufferDesc, &vertexData, m_VertexBuffer.GetAddressOf());
-	assert(SUCCEEDED(hr));
+	MYASSERT(SUCCEEDED(hr));
 
 
 	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -194,7 +194,7 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 	indexData.SysMemSlicePitch = 0;
 
 	hr = device->CreateBuffer(&indexBufferDesc, &indexData, m_IndexBuffer.GetAddressOf());
-	assert(SUCCEEDED(hr));
+	MYASSERT(SUCCEEDED(hr));
 
 
 

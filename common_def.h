@@ -4,13 +4,19 @@
 
 namespace  
 {
-	#define PI                        3.141592654    
-	#define HALFPI                    1.570796327    
-	#define TWOPI                     6.283185307    
-	#define RADIANS_PER_DEGREE        1.74532952e-2    
-	#define DEGREES_PER_RADIAN        57.29577951   
-	#define ROOT_2                    1.414213562    
-	#define SIN_45                    0.707106781
+	#define STRINGIFY(s) #s 
+	#define MYASSERT( p ) { if(!p) MessageBoxA( NULL, STRINGIFY(p), "Err", MB_OK); }
+
+	#define SAFE_DELETE(a) if( (a) != NULL ) delete (a); (a) = NULL;
+	#define DXASSERT(a) MYASSERT(SUCCEEDED(a))
+
+	#define PI						3.141592654    
+	#define HALFPI					1.570796327    
+	#define TWOPI					6.283185307    
+	#define DEG_TO_RAD(x)			((1.74532952e-2)*x)    
+	#define RAD_TO_DEG(x)			(57.29577951*x)   
+	#define ROOT_2					1.414213562    
+	#define SIN_45					0.707106781
 	
 	static double const pi = 3.141592654;
 	static double const halfpi = pi / 2.0;

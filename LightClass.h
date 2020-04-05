@@ -23,9 +23,9 @@ public:
 	void GenerateProjectionMatrix(float screenNear, float screenDepth);
 	void GenerateOrthoMatrix(float screenNear, float screenDepth);
 
-	void GetViewMatrix(Mat4& viewMatrix);
-	void GetProjectionMatrix(Mat4& projMatrix);
-	void GetOrthoMatrix(Mat4& orthoMatrix);
+	Mat4 GetViewMatrix();
+	Mat4 GetProjectionMatrix();
+	Mat4 GetOrthoMatrix();
 
 	Vector4 GetAmbientColor();
 	Vector4 GetDiffuseColor();

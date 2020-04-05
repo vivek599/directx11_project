@@ -8,7 +8,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR psCmdLine,
 	bool result;
  
 	unique_ptr<WindowClass> system; system.reset( new WindowClass());
-	assert(system);
+	MYASSERT(system);
 
 
 	result = system->Initialize();

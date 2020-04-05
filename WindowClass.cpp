@@ -24,30 +24,30 @@ bool WindowClass::Initialize()
 	InitializeWindows(screenWidth, screenHeight);
 
 	m_cpuUsage.reset ( new CpuUsageClass());
-	assert(m_cpuUsage);
+	MYASSERT(m_cpuUsage);
 
 	m_cpuUsage->Initialize();
 
 
 	m_Input.reset(new InputClass());
-	assert(m_Input);
+	MYASSERT(m_Input);
 
 
 	result = m_Input->Initialize(m_hInstance,m_hwnd, screenWidth, screenHeight );
-	assert(result);
+	MYASSERT(result);
 
+	m_rawMouse.Initialize(m_hwnd);
+	m_rawKeyboard.Initialize(m_hwnd);
 
 	m_Graphics.reset( new GraphicClass());
 
-	assert(m_Graphics);
+	MYASSERT(m_Graphics);
 
 
 	result = m_Graphics->Initialize(screenWidth, screenHeight, m_hwnd);
 
-	assert(result);
+	MYASSERT(result);
 
-	m_rawMouse.Initialize(m_hwnd);
-	m_rawKeyboard.Initialize(m_hwnd);
 
 	return true;
 
@@ -63,32 +63,24 @@ void WindowClass::Shutdown()
 void WindowClass::Run()
 {
 	MSG msg;
-	bool result;
+	bool result = false;
 	m_bExitApp = false;
 	ZeroMemory(&msg, sizeof(MSG));
 	m_bExitApp = false;
 
 	while (!m_bExitApp)
 	{
-		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE ))
+		while (PeekMessage(&msg, m_hwnd, 0, 0, PM_REMOVE ))
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
 
-		// If windows signals to end the application then exit out.
-		if (msg.message == WM_QUIT) 
-		{ 
-			m_bExitApp = true; 
-		} 
-		else 
-		{ 
-			result = Frame(); 
-			if (!result || BaseClass::KeyDown(VK_ESCAPE)) 
-			{ 
-				m_bExitApp = true; 
-			}
-		}
+		result = Frame();
+
+		m_bExitApp = (msg.message == WM_QUIT) || result == false || BaseClass::KeyDown(VK_ESCAPE);
+
+		Sleep(5);
 
 	}
 
@@ -109,27 +101,8 @@ LRESULT CALLBACK WindowClass::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam
 			return 0;
 		}
 
-		//case WM_CHAR:
-		//{
-		//	//if ((HIWORD(lparam) & KF_REPEAT) == 0)
-		//	{
-		//		m_Input->KeyDown((unsigned int)wparam);
-		//	}
-		//	//MessageBox( hwnd, L"WM_CHAR", L"down", MB_OK);
-		//	return 0;
-		//}
-
-		//case WM_KEYUP:
-		//{
-		//	m_Input->KeyUp((unsigned int)wparam);
-		//	//MessageBox(hwnd, LPCWSTR(to_wstring((unsigned int)wparam).c_str()), L"up", MB_OK);
-		//	return 0;
-		//}
-
 		default:
-		{
 			return DefWindowProc(hwnd, umsg, wparam, lparam);
-		}
 	}
 
 }
@@ -142,13 +115,13 @@ bool WindowClass::Frame()
 	m_cpuUsage->Frame();
 
 	result = m_Input->Frame(m_deltaTime);
-	assert(result);
+	MYASSERT(result);
 
 
 	if (!m_pauseGameLoop)
 	{
 		result = m_Graphics->Frame(m_deltaTime);
-		assert(result);
+		MYASSERT(result);
 	}
 
 	m_deltaTime = t.End("")/1000.0f; // in seconds

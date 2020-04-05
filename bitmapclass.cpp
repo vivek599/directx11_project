@@ -18,10 +18,10 @@ bool BitmapClass::Initialize(ID3D11Device* device, HWND hwnd, int screenWidth, i
 	bool result;
 	
 	m_BitmapShader.reset( new BitmapShaderClass());
-	assert(m_BitmapShader);
+	MYASSERT(m_BitmapShader);
 
 	result = m_BitmapShader->Initialize(device, hwnd);
-	assert(result);
+	MYASSERT(result);
 
 
 
@@ -35,11 +35,11 @@ bool BitmapClass::Initialize(ID3D11Device* device, HWND hwnd, int screenWidth, i
 	m_PrevPosY = -1;
 
 	result = InitializeBuffers(device);
-	assert(result);
+	MYASSERT(result);
 
 
 	result = LoadTexture(device, path);
-	assert(result);
+	MYASSERT(result);
 
 
 	return true;

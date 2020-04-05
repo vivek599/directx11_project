@@ -19,7 +19,7 @@ bool Canvas2D::Initialize( D3DClass* renderer)
 	d2dFactoryOptions.debugLevel = D2D1_DEBUG_LEVEL_INFORMATION;
 
 	hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, __uuidof(*m_d2dFactory.Get()), &d2dFactoryOptions, (void**)m_d2dFactory.ReleaseAndGetAddressOf());
-	assert(SUCCEEDED(hr));
+	MYASSERT(SUCCEEDED(hr));
 
 	// Create the DXGI Surface Render Target.
 	//FLOAT dpiX = GetDpiForWindow(GetActiveWindow());
@@ -43,19 +43,19 @@ bool Canvas2D::Initialize( D3DClass* renderer)
 
 	// Create a Direct2D render target which can draw into the surface in the swap chain
 	hr = m_d2dFactory->CreateDxgiSurfaceRenderTarget(renderer->GetBackBufferSurface().Get(), &props, m_renderTarget.ReleaseAndGetAddressOf());
-	assert(SUCCEEDED(hr));
+	MYASSERT(SUCCEEDED(hr));
 
 
 
 
 	hr = m_renderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Yellow), m_brush.ReleaseAndGetAddressOf());
-	assert(SUCCEEDED(hr));
+	MYASSERT(SUCCEEDED(hr));
 
 	hr = m_renderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Yellow), m_textbrush.ReleaseAndGetAddressOf());
-	assert(SUCCEEDED(hr));
+	MYASSERT(SUCCEEDED(hr));
 
 	hr = m_renderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), m_fillbrush.ReleaseAndGetAddressOf());
-	assert(SUCCEEDED(hr));
+	MYASSERT(SUCCEEDED(hr));
 
 
 	D2D1_SIZE_F targetSize = m_renderTarget->GetSize();
@@ -65,7 +65,7 @@ bool Canvas2D::Initialize( D3DClass* renderer)
 	m_fillbrush->SetTransform(m_transform);
 
 	hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), (IUnknown**)m_dWriteFactory.ReleaseAndGetAddressOf());
-	assert(SUCCEEDED(hr));
+	MYASSERT(SUCCEEDED(hr));
 
 	hr = m_dWriteFactory->CreateTextFormat(
 		L"Trebuchet MS",
@@ -79,10 +79,10 @@ bool Canvas2D::Initialize( D3DClass* renderer)
 	);
 
 	hr = m_textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_TRAILING);
-	assert(SUCCEEDED(hr));
+	MYASSERT(SUCCEEDED(hr));
 
 	hr = m_textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
-	assert(SUCCEEDED(hr));
+	MYASSERT(SUCCEEDED(hr));
 
 	hr = m_dWriteFactory->CreateTextFormat(
 		L"Trebuchet MS",
@@ -96,10 +96,10 @@ bool Canvas2D::Initialize( D3DClass* renderer)
 	);
 
 	hr = m_textFormat96->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
-	assert(SUCCEEDED(hr));
+	MYASSERT(SUCCEEDED(hr));
 
 	hr = m_textFormat96->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
-	assert(SUCCEEDED(hr));
+	MYASSERT(SUCCEEDED(hr));
 
 	return true;
 }
@@ -118,7 +118,7 @@ bool Canvas2D::InitializeWorldText(ATexture* textQuad)
 		);
 
 	HRESULT hr = m_d2dFactory->CreateDxgiSurfaceRenderTarget(textQuad->GetDXGISurface(), &props, m_renderTargetWorldText.ReleaseAndGetAddressOf());
-	assert(SUCCEEDED(hr));
+	MYASSERT(SUCCEEDED(hr));
 	
 	return true;
 }
