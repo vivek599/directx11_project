@@ -278,4 +278,21 @@ namespace
 		return u.d;
 	}
 
+	float Lerp(float min, float max, float blend)
+	{
+		return min + (max - min) * blend;
+	}
+
+	float InvLerp(float min, float max, float val)
+	{
+		return (val - min) / (max - min);
+	}
+
+	float Remap(float iMin, float iMax, float oMin, float oMax, float value)
+	{
+		float blend = InvLerp(iMin, iMax, value);
+
+		return Lerp(oMin, oMax, blend);
+	}
+
 }
