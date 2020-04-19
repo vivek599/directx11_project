@@ -66,8 +66,15 @@ void CameraClass::Fly(float deltaTime)
 	yaw += float(m_rawMouse.GetDeltaX()) * MOUSESPEED * deltaTime;
 
 	pitch = pitch > 80.0f ? 80.0f : (pitch < -80.0f ? -80.0f : pitch);
-
+	
 	SetRotation(pitch, yaw, 0.f);
+
+	if (BaseClass::KeyDown('T'))
+	{
+		Vector3 pyr = PitchYawRollFromVector(Vector3( 0.0f, 0.0f, 1.0f));
+
+		SetRotation(pitch = pyr.x, yaw = pyr.y, pyr.z );
+	}
 
 	float distance = MOVEMENTSPEED * deltaTime;
 
@@ -118,4 +125,6 @@ void CameraClass::Fly(float deltaTime)
 		m_Position.y -= distance;
 		m_lookAt.y -= distance;
 	}
+
+
 }

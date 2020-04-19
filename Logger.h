@@ -23,7 +23,6 @@ public:
 private:
 
     Logger();
-    Logger(const Logger& l);
 	~Logger(); 
     
     // static variables

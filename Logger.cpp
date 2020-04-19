@@ -43,11 +43,6 @@ Logger::~Logger()
 	m_stream.close();
 }
 
-Logger::Logger(const Logger& l)
-{
-	// this cannot happen
-}
-
 void DXLOG(string str)
 {
 //#ifdef _DEBUG
