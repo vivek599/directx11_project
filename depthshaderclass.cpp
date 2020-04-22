@@ -37,7 +37,6 @@ void DepthShaderClass::Shutdown()
 	return;
 }
 
-
 bool DepthShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, Mat4 worldMatrix, Mat4 viewMatrix, Mat4 projectionMatrix, Vector3 cameraPosition)
 {
 	bool result;

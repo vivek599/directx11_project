@@ -67,7 +67,7 @@ bool GraphicClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_Light->SetSpecularPower(32.0f);
 	m_Light->SetLookAt(0.0f, 0.0f, 0.0f);
 	m_Light->GenerateProjectionMatrix(SCREEN_NEAR, SCREEN_DEPTH);
-	m_Light->GenerateOrthoMatrix(SCREEN_NEAR, SCREEN_DEPTH);
+	m_Light->GenerateOrthoMatrix( SCREEN_NEAR, SCREEN_DEPTH);
 
 	// Create the render to texture object.
 	m_renderTexture.reset( new RenderTextureClass());
@@ -298,7 +298,7 @@ bool GraphicClass::RenderScene(float deltaTime, bool depthPass)
 
 	// Get the view and orthographic matrices from the light object.
 	Mat4 lightViewMatrix = m_Light->GetViewMatrix();
-	Mat4 lightProjectionMatrix = m_Light->GetProjectionMatrix(); 
+	Mat4 lightProjectionMatrix = m_Light->GetOrthoMatrix();//m_Light->GetProjectionMatrix(); 
 
 	// Construct the frustum.
 	m_frustum->ConstructFrustum(SCREEN_DEPTH, projection, view);

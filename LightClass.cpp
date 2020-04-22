@@ -78,7 +78,7 @@ void LightClass::GenerateProjectionMatrix(float screenNear, float screenDepth)
 void LightClass::GenerateOrthoMatrix(float screenNear, float screenDepth)
 {
 	// Create the projection matrix for the light.
-	m_orthoMatrix = XMMatrixOrthographicLH(2048.0f, 2048.0f, screenNear, screenDepth);
+	m_orthoMatrix = XMMatrixOrthographicLH( 100.0f, 100.0f, 0.1f, 300.f);
 }
 
 Mat4 LightClass::GetViewMatrix()

@@ -5,126 +5,97 @@ Texture2D shaderTexture[2];
 
 //We require a clampbased sampler when sampling the depth buffer so that it doesn't wrap around and sample incorrect information.
 SamplerState sampleType : register(s0);
-SamplerState SampleTypeClamp : register(s1); 
+SamplerState SampleTypeClamp : register(s1);
 
 cbuffer LightBuffer
 {
-	float4 ambientColor;
-	float4 diffuseColor;
-	float3 lightDirection;
-	float specularPower;
-	float4 specularColor;
+    float4 ambientColor;
+    float4 diffuseColor;
+    float3 lightDirection;
+    float specularPower;
+    float4 specularColor;
 };
 
 struct PixelInputType
 {
-	float4 position : SV_POSITION;
-	float2 tex : TEXCOORD0;
-	float3 normal : NORMAL;
-	float3 tangent : TANGENT;
-	float3 binormal : BINORMAL;
-	float3 viewDirection : TEXCOORD1;
-	float4 lightViewPosition : TEXCOORD2;
-	float3 lightPos : TEXCOORD3;
-    float  visibility : TEXCOORD4;
+    float4 position : SV_POSITION;
+    float2 tex : TEXCOORD0;
+    float3 normal : NORMAL;
+    float3 tangent : TANGENT;
+    float3 binormal : BINORMAL;
+    float3 viewDirection : TEXCOORD1;
+    float4 lightViewPosition : TEXCOORD2;
+    float3 lightPos : TEXCOORD3;
+    float visibility : TEXCOORD4;
 };
 
-float4 blurPixel(float4 color, float2 uv )
+float CalculateShadow(PixelInputType input, float dotLightNormal)
 {
+    //float3 pos = (input.lightViewPosition.xyz * 0.5f + 0.5f);
+    float3 pos = 0.0f;
     
-    float of = 1.0f / 160.0f;
+    pos.x = input.lightViewPosition.x / input.lightViewPosition.w * 0.5f + 0.5f;
+    pos.y = -input.lightViewPosition.y / input.lightViewPosition.w * 0.5f + 0.5f;
+    pos.z = input.lightViewPosition.z / input.lightViewPosition.w;
     
-    float karnel[3][3] = 
+    if (pos.z > 1.0f)
     {
-        { -5.0f * of,  3.0f * of,   5.0f * of  },
-        { -3.0f * of,  of,          3.0f * of  },
-        { -5.0f * of, -3.0f * of,   5.0f * of },
-    };
-    
-    float4 blured = 0.0f;
-    
-    for (int i = 0; i < 3; i++)
-    {
-        for (int j = 0; j < 3; j++)
-        {
-            blured += depthMapTexture.Sample(SampleTypeClamp, uv + karnel[i][j]).r;
-        }
+        pos.z = 1.0f;
     }
     
-    blured /= 9.0f;
+    float bias = max(0.0001f * (1.0f - dotLightNormal), 0.00001f);
     
-    return blured;
+    //percentage closer filter
+    float shadow = 0.f;
+    float width = 0.f;
+    float height = 0.f;
+    depthMapTexture.GetDimensions(width, height);
+    
+    float2 texelSize = 0.25f * 1.0f / max(width, height);
+    
+    float karnel[9] = { 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 4.0f, 3.0f, 2.0f, 1.0f };
+    
+    for (int i = 0; i < 9; i++)
+    {
+        float depthValueH = depthMapTexture.Sample(SampleTypeClamp, pos.xy + float2(karnel[i], 0.0f) * texelSize ).r;
+        float depthValueV = depthMapTexture.Sample(SampleTypeClamp, pos.xy + float2(0.0f, karnel[i]) * texelSize ).r;
+        shadow += (depthValueH + bias) < pos.z ? 0.0f : 1.0f;
+        shadow += (depthValueV + bias) < pos.z ? 0.0f : 1.0f;
+    }
+            
+    shadow /= 18.0f;
+    
+    return shadow;
 }
+
 
 float4 main(PixelInputType input) : SV_TARGET
 {
-	float2 projectTexCoord;
-	float3 lightDir;
-	float lightIntensity;
-	float4 textureColor; 
-	float4 color = ambientColor;
-	
-	//float4 color = ambientColor;
-	float3 reflection;
-	float4 specular = float4(0.0f, 0.0f, 0.0f, 0.0f); 
-
-	float4 normalMap;
-	float3 bumpNormal;
-
-    float bias = 0.000001f;
-	
-	projectTexCoord.x = input.lightViewPosition.x / input.lightViewPosition.w * 0.5f + 0.5f;
-	projectTexCoord.y = -input.lightViewPosition.y / input.lightViewPosition.w * 0.5f + 0.5f;
-    
-    input.lightViewPosition.xyz /= input.lightViewPosition.w;
-	
-	textureColor = shaderTexture[0].Sample(sampleType, input.tex );
-	normalMap = shaderTexture[1].Sample(sampleType, input.tex );
+    float4 textureColor = shaderTexture[0].Sample(sampleType, input.tex);
+    float4 normalMap = shaderTexture[1].Sample(sampleType, input.tex);
 				
 	// Expand the range of the normal value from (0, +1) to (-1, +1).
-	normalMap = (normalMap * 2.0f) - 1.0f;
+    normalMap = (normalMap * 2.0f) - 1.0f;
 
 	// Calculate the normal from the data in the normal map.
-	bumpNormal = (normalMap.x * input.tangent) + (normalMap.y * input.binormal) + (normalMap.z * input.normal);
+    float3 bumpNormal = (normalMap.x * input.tangent) + (normalMap.y * input.binormal) + (normalMap.z * input.normal);
 
 	// Normalize the resulting bump normal.
-	bumpNormal = normalize(bumpNormal);  
-	
-	if ((saturate(projectTexCoord.x) == projectTexCoord.x) && (saturate(projectTexCoord.y) == projectTexCoord.y))
-    {
-        float depthValue = depthMapTexture.Sample(SampleTypeClamp, projectTexCoord).r;
-		 
-        float lightDepthValue = input.lightViewPosition.z - bias;
-		     
-        if (lightDepthValue < depthValue)
-        {
-            //regular lighting
-	        //lightDir = -lightDirection;
-            lightIntensity = 1.0f; //saturate(dot(bumpNormal, input.lightPos)); //lightDir));
+    bumpNormal = normalize(bumpNormal);
+    
+    float lightIntensity = saturate(dot(bumpNormal, input.lightPos));
+    float diff = max( lightIntensity, 0.0f);
 
-            if (lightIntensity > 0.0f)
-            {
-                color += diffuseColor; // * lightIntensity);
-                color = saturate(color);
-                
-                // Calculate the reflection vector based on the light intensity, normal vector, and light direction.
-                reflection = normalize(2 * lightIntensity * bumpNormal - input.lightPos);
+    // Calculate the reflection vector based on the light intensity, normal vector, and light direction.
+    float reflection = normalize(2 * diff * bumpNormal - input.lightPos);
 
-                // Determine the amount of specular light based on the reflection vector, viewing direction, and specular power.
-                specular = pow(saturate(dot(reflection, input.viewDirection)), specularPower);
-            }
-        } 
- 
-    }
+    // Determine the amount of specular light based on the reflection vector, viewing direction, and specular power.
+    float specular = pow(saturate(dot(reflection, input.viewDirection)), specularPower);
     
-	color *= textureColor;
+    float shadow = CalculateShadow(input, lightIntensity );
     
+    float4 finalColor = (shadow * (diff * diffuseColor + specular) + ambientColor) * textureColor;
     
+    return lerp(finalColor, float4(1.0f, 1.0f, 1.0f, 1.0f), input.visibility);
     
-	// Add the specular component last to the output color. 
-	color = saturate(color + specular);
-    
-    color = lerp(color, float4(1.0f, 1.0f, 1.0f, 1.0f), input.visibility );
-    
-	return color;
 }
