@@ -84,11 +84,11 @@ bool GraphicClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	auto func = [=]( const char* modelfile, const wchar_t* texture, const wchar_t* normal) -> ModelClass* { return new ModelClass(m_D3D->GetDevice().Get(), modelfile, texture, normal); };
 	
 	DxTime t; t.Start();
-	future<ModelClass*> future1 = async(launch::async, func, "../Models/greek_statue/Statue_v1_L2.fbx", L"../Models/greek_statue/DavidFixedDiff.jpg", L"../Models/greek_statue/Statue_v1_L2_n.jpg");
-	future<ModelClass*> future2 = async(launch::async, func, "../Models/angel_lucy/alucy_lowpoly2.fbx", L"../Models/angel_lucy/Concrete_pink_1S.jpg", L"../Models/angel_lucy/RockSharp0036_1S_n.jpg");
+	future<ModelClass*> future1 = async(launch::async, func, "../Models/greek_statue/Statue_v1_L2.fbx", L"../Models/greek_statue/DavidFixedDiff.jpg", L"../Models/greek_statue/square_n.png");
+	future<ModelClass*> future2 = async(launch::async, func, "../Models/angel_lucy/alucy_lowpoly2.fbx", L"../Models/angel_lucy/Concrete_pink_1S.jpg", L"../Models/angel_lucy/square_n.png");
 	future<ModelClass*> future3 = async(launch::async, func, "../Models/greek_platform/plain_platform_123.fbx", L"../Models/greek_platform/plain_platform.jpg", L"../Models/greek_platform/greek_platform1_n.jpg");
 	future<ModelClass*> future4 = async(launch::async, func, "../Models/voronoi/voronoi_box.fbx", L"../Models/voronoi/gray_tex1.jpg", L"../Models/voronoi/gray_tex1_n.jpg");
-	future<ModelClass*> future5 = async(launch::async, func, "../Models/greek_platform/greek_platform1.fbx", L"../Models/greek_platform/greek_platform1.jpg", L"../Models/greek_platform/greek_platform1_n.jpg");
+	future<ModelClass*> future5 = async(launch::async, func, "../Models/greek_platform/greek_platform1.fbx", L"../Models/greek_platform/greek_platform1.jpg", L"../Models/greek_platform/Brick_and_Concrete_V1_1024_n.jpg");
 	
 	m_Models.push_back(future1.get());
 	m_Models.push_back(future2.get());

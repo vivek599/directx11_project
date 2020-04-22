@@ -43,7 +43,7 @@ float CalculateShadow(PixelInputType input, float dotLightNormal)
         pos.z = 1.0f;
     }
     
-    float bias = max(0.0001f * (1.0f - dotLightNormal), 0.00001f);
+    float bias = max(0.001f * (1.0f - dotLightNormal), 0.00001f);
     
     //percentage closer filter
     float shadow = 0.f;
@@ -53,9 +53,9 @@ float CalculateShadow(PixelInputType input, float dotLightNormal)
     
     float2 texelSize = 0.25f * 1.0f / max(width, height);
     
-    float karnel[9] = { 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 4.0f, 3.0f, 2.0f, 1.0f };
+    float karnel[7] = { -3.0f, -2.0f, -1.0f, 0.0f, 1.0f, 2.0f, 3.0f };
     
-    for (int i = 0; i < 9; i++)
+    for (int i = 0; i < 7; i++)
     {
         float depthValueH = depthMapTexture.Sample(SampleTypeClamp, pos.xy + float2(karnel[i], 0.0f) * texelSize ).r;
         float depthValueV = depthMapTexture.Sample(SampleTypeClamp, pos.xy + float2(0.0f, karnel[i]) * texelSize ).r;
@@ -63,7 +63,7 @@ float CalculateShadow(PixelInputType input, float dotLightNormal)
         shadow += (depthValueV + bias) < pos.z ? 0.0f : 1.0f;
     }
             
-    shadow /= 18.0f;
+    shadow /= 14.0f;
     
     return shadow;
 }
@@ -72,7 +72,7 @@ float CalculateShadow(PixelInputType input, float dotLightNormal)
 float4 main(PixelInputType input) : SV_TARGET
 {
     float4 textureColor = shaderTexture[0].Sample(sampleType, input.tex);
-    float4 normalMap = shaderTexture[1].Sample(sampleType, input.tex);
+    float4 normalMap = shaderTexture[1].Sample(sampleType, input.tex * 16.0f );
 				
 	// Expand the range of the normal value from (0, +1) to (-1, +1).
     normalMap = (normalMap * 2.0f) - 1.0f;
@@ -94,7 +94,7 @@ float4 main(PixelInputType input) : SV_TARGET
     
     float shadow = CalculateShadow(input, lightIntensity );
     
-    float4 finalColor = (shadow * (diff * diffuseColor + specular) + ambientColor) * textureColor;
+    float4 finalColor = (shadow * saturate(diff * diffuseColor + specular) + ambientColor) * textureColor;
     
     return lerp(finalColor, float4(1.0f, 1.0f, 1.0f, 1.0f), input.visibility);
     
