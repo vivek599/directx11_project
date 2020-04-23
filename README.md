@@ -12,7 +12,7 @@
 
 	 Directional Shadow Maps
 
-	 Exponential Fog
+	 Exponential Fog and Skybox
 
 	 Normal maps
 
@@ -26,4 +26,4 @@
 
 	 Text rendering using DirectWrite
 
-	 Logger Class, high-resolution time stamp class
+	 Logger Class, high-resolution time stamp class and Debug Counters Like Fps, deltaTime.
