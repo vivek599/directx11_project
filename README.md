@@ -29,15 +29,26 @@
 	 Logger Class, high-resolution time stamp class and Debug Counters Like Fps, deltaTime.
 
 //TODO
+
 Forward plus lighting
+
 SSAO
+
 God rays and Volumetric lights
+
 PBR material 
+
 Post Pocesssing, bloom, lens flare, Bokeh Depth Of Field
+
 Refraction and reflection
+
 Terrain rendering
+
 Water rendering
+
 Grass and Vegitation, Foliage
+
 Animations
+
 Vehicles 
  
