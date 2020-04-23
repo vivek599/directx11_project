@@ -69,6 +69,49 @@ float CalculateShadow(PixelInputType input, float dotLightNormal)
 }
 
 
+float CalculateVarienceShadow(PixelInputType input )
+{
+    float3 pos = 0.0f;
+    
+    pos.x = input.lightViewPosition.x / input.lightViewPosition.w * 0.5f + 0.5f;
+    pos.y = -input.lightViewPosition.y / input.lightViewPosition.w * 0.5f + 0.5f;
+    pos.z = input.lightViewPosition.z / input.lightViewPosition.w;
+ 
+    float bias = 0.000001f;
+    float shadow = 0.f;
+    float width = 0.f;
+    float height = 0.f;
+    depthMapTexture.GetDimensions(width, height);
+    
+    float2 texelSize = 0.25f * 1.0f / max(width, height);
+    
+    int numSamples = 11;
+    for (int i = 0; i < numSamples; i++)
+    {
+        float depthValueH = depthMapTexture.Sample(SampleTypeClamp, pos.xy + float2(i - numSamples / 2.f, 0.0f) * texelSize).r;
+        float depthValueV = depthMapTexture.Sample(SampleTypeClamp, pos.xy + float2(0.0f, i - numSamples / 2.f ) * texelSize).r;
+        shadow += (depthValueH + bias) < pos.z ? 0.0f : 1.0f;
+        shadow += (depthValueV + bias) < pos.z ? 0.0f : 1.0f;
+    }
+            
+    shadow /= 2.0f * numSamples;
+    
+    float2 moments = depthMapTexture.Sample(SampleTypeClamp, pos.xy ).rg;
+    moments.x = shadow;
+    
+    float p = (moments.x ) < pos.z ? 0.0f : 1.0f;
+ 
+    float varience = max(moments.y - moments.x * moments.x, 0.00002f);
+    
+    float d = pos.z - moments.x;
+    
+    float pMax = varience / ( varience + d*d );
+    
+    return min( max(p, pMax), 1.0f);
+}
+
+
+
 float4 main(PixelInputType input) : SV_TARGET
 {
     float4 textureColor = shaderTexture[0].Sample(sampleType, input.tex);
@@ -84,7 +127,7 @@ float4 main(PixelInputType input) : SV_TARGET
     bumpNormal = normalize(bumpNormal);
     
     float lightIntensity = saturate(dot(bumpNormal, input.lightPos));
-    float diff = max( lightIntensity, 0.0f);
+    float diff = max( lightIntensity, 0.0001f);
 
     // Calculate the reflection vector based on the light intensity, normal vector, and light direction.
     float reflection = normalize(2 * diff * bumpNormal - input.lightPos);
@@ -92,9 +135,9 @@ float4 main(PixelInputType input) : SV_TARGET
     // Determine the amount of specular light based on the reflection vector, viewing direction, and specular power.
     float specular = pow(saturate(dot(reflection, input.viewDirection)), specularPower);
     
-    float shadow = CalculateShadow(input, lightIntensity );
+    float shadow = CalculateVarienceShadow(input );
     
-    float4 finalColor = (shadow * saturate(diff * diffuseColor + specular) + ambientColor) * textureColor;
+    float4 finalColor = (shadow * (diff * diffuseColor) + specular + ambientColor) * pow(textureColor, 1.0f / 2.2f);
     
     return lerp(finalColor, float4(1.0f, 1.0f, 1.0f, 1.0f), input.visibility);
     

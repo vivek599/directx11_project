@@ -59,8 +59,8 @@ bool GraphicClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 
 	// Initialize the light object.
-	m_Light->SetAmbientColor(0.5f, 0.5f, 0.5f, 1.0f);
-	m_Light->SetDiffuseColor(1.0f, 1.0f, 0.0f, 1.0f);
+	m_Light->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
+	m_Light->SetDiffuseColor(0.9f, 0.9f, 1.0f, 1.0f);
 	Vector3 ldir = Vector3(0.f) - Vector3(1.0f, 1.0f, -1.0f);
 	m_Light->SetDirection(ldir.x, ldir.y, ldir.z);
 	m_Light->SetSpecularColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -86,7 +86,7 @@ bool GraphicClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	DxTime t; t.Start();
 	future<ModelClass*> future1 = async(launch::async, func, "../Models/greek_statue/Statue_v1_L2.fbx", L"../Models/greek_statue/DavidFixedDiff.jpg", L"../Models/greek_statue/square_n.png");
 	future<ModelClass*> future2 = async(launch::async, func, "../Models/angel_lucy/alucy_lowpoly2.fbx", L"../Models/angel_lucy/Concrete_pink_1S.jpg", L"../Models/angel_lucy/square_n.png");
-	future<ModelClass*> future3 = async(launch::async, func, "../Models/greek_platform/plain_platform_123.fbx", L"../Models/greek_platform/plain_platform.jpg", L"../Models/greek_platform/greek_platform1_n.jpg");
+	future<ModelClass*> future3 = async(launch::async, func, "../Models/greek_platform/plain_platform_123.fbx", L"../Models/greek_platform/plain_platform.jpg", L"../Models/greek_platform/White_maple_pxr128_normal.jpg");
 	future<ModelClass*> future4 = async(launch::async, func, "../Models/voronoi/voronoi_box.fbx", L"../Models/voronoi/gray_tex1.jpg", L"../Models/voronoi/gray_tex1_n.jpg");
 	future<ModelClass*> future5 = async(launch::async, func, "../Models/greek_platform/greek_platform1.fbx", L"../Models/greek_platform/greek_platform1.jpg", L"../Models/greek_platform/Brick_and_Concrete_V1_1024_n.jpg");
 	
