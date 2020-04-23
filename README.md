@@ -16,12 +16,14 @@
 
 	 Normal maps
 
+	 Gamma Correct colors
+
+	 Fly Camera Movement
+
 	 Canvas GUI Elements using custom texture class
 
 	 Text rendering using Bitmap font Atlas
 
 	 Text rendering using DirectWrite
-
-	 Gamma Correct colors
 
 	 Logger Class, high-resolution time stamp class
