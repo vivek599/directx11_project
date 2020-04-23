@@ -8,7 +8,7 @@
 
 **Percentage Closer Filtering Shadow Mapping with blur**
 
-**Variance Shadow Mapping with blur****
+**Variance Shadow Mapping**
 
 **Directional Shadow Maps**
 
